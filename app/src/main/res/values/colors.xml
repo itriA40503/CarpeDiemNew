@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="transparent_half">#6e000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="darkdarkgrey">#424242</color>
+    <color name="darkgrey">#666666</color>
+    <color name="grey">#7A7A7A</color>
+    <color name="red">#ff0000</color>
+    <color name="dark_red">#990000</color>
+    <color name="semi_grey">#c1c1c1</color>
+    <color name="semisemi_grey">#e8e8e8</color>
+    <color name="bluelight">#449DEF</color>
+    <color name="bluedark">#2F6699</color>
+    <color name="bluegreen">#589aa3</color>
+    <color name="greenlight">#70C656</color>
+    <color name="greendark">#53933F</color>
+    <color name="orangelight">#F3AE1B</color>
+    <color name="orangedark">#BB6008</color>
+    <color name="black">#000000</color>
+    <color name="black_semi_transparent">#B2000000</color>
+    <color name="background">#e5e5e5</color>
+    <color name="half_black">#808080</color>
+    <color name="white_pressed">#f1f1f1</color>
+    <color name="pink_primary">#FF6666</color>
+    <color name="pink_semi_primary">#FFCCCC</color>
+    <color name="pink_semi_transparent">#7ae41e5e</color>
+    <color name="pink_semi_transparent_pressed">#80f7e89e</color>
+    <color name="blue_semi_transparent">#805677fc</color>
+    <color name="blue_semi_transparent_pressed">#8051fee0</color>
+    <color name="green_semi_transparent">#8031dd48</color>
+    <color name="green_semi_transparent_pressed">#80dcffb5</color>
+    <color name="bluePrimary">#0073ED</color>
+    <color name="bluePrimary_transparent">#b51e90ff</color>
+    <color name="primary_gray">#666666</color>
+
+
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="activate_text_color">#FF666666</color>
+    <color name="deactivate_text_color">#FFCCCCCC</color>
+</resources>
