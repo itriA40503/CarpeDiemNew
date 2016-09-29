@@ -6,6 +6,8 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
+import rx.Observable;
 
 /**
  * Created by A40503 on 2016/9/21.
@@ -16,15 +18,25 @@ public interface CarpeDiemApi {
 //    @GET("testing/{name}")
 //    Call<CarpeDiemObject>getToken(@Path("jsonTest.php")String name);
 
-    String ENDPOINT = "http://ccmacd.ddns.net";
+    String ENDPOINT = "http://ccmacd.ddns.net/";
 
     @FormUrlEncoded
-    @POST("/user/create")
+    @POST("user/create")
     Call<CarpeDiemObject>getToken(@Field("uuid") String uuid);
 
-    @GET("/user/sigin")
-    Call<CarpeDiemObject>signInFromUUID(@Field("uuid") String uuid);
+    @FormUrlEncoded
+    @POST("user/create")
+    Observable<CarpeDiemObject> getTokenOb(@Field("uuid") String uuid);
 
-    @GET("/user/sigin")
-    Call<CarpeDiemObject>signIn(@Field("username") String username, @Field("password")String password);
+    @GET("/user/signin")
+    Observable<CarpeDiemObject>getTokenGET(@Query(value = "uuid" ,encoded = true) String uuid);
+
+    @GET("/user/signin")
+    Observable<CarpeDiemObject>getSiginByUUID(@Query(value = "uuid" ,encoded = true) String uuid);
+
+    @GET("/user/signin")
+    Observable<CarpeDiemObject>getSigin(@Query(value = "username" ,encoded = true) String username, @Query(value = "password", encoded = true) String password);
+
+    @GET("/event")
+    Observable<CarpeDiemListEventObject>getEventList(@Query(value = "access_token", encoded = true) String  token);
 }
