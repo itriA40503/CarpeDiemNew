@@ -48,7 +48,11 @@ public class CarpeDiemController extends Application {
         registerReceiver(mReceiver, filter);
 
         //# Setting TimeEvents
-
+        Events = new ArrayList<TimeEvent>();
+//        Events.add(new TimeEvent("FisrtEvent", 5000, false));
+//        Events.add(new TimeEvent("SecondEvent", 10000, false));
+//        Events.add(new TimeEvent("ContinuousEvent", 10000, true));
+//        Events.add(new TimeEvent("ContinuousEvent2", 5000, true));
     }
 
     public synchronized static CarpeDiemController getInstance(){
@@ -136,7 +140,7 @@ public class CarpeDiemController extends Application {
 //                            Log.d("onError",((HttpException) e).response().headers().toString());
 //                            Log.d("onError",((HttpException) e).response().errorBody().string());
 //                            Log.d("onError",((HttpException) e).response().raw().toString());
-
+//
                             //# Get errorBody to gson
                             String errorBody = ((HttpException) e).response().errorBody().string();
                             Gson gson = new Gson();
@@ -157,13 +161,14 @@ public class CarpeDiemController extends Application {
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
+                        Log.d("RxGetToken","onERROR ");
                     }
                     @Override
                     public void onNext(CarpeDiemObject carpeDiemObject) {
                         TOKEN = carpeDiemObject.getToken();
                         if(TOKEN != null){
                             SaveUserInPref(uuid, TOKEN);
-
+                            RxGetEventList(TOKEN);
                         }else {
                             Log.d("GetToken","TOKEN is NULL");
                         }
@@ -193,6 +198,7 @@ public class CarpeDiemController extends Application {
                         Gson gson = new Gson();
                         CarpeDiemEventObject ObjectFromGson = gson.fromJson(errorBody,CarpeDiemEventObject.class);
                         Log.d("RxGetEventList","CODE : "+ObjectFromGson.getCode());
+                        Log.d("RxGetEventList","onERROR ");
                     }
 
                     @Override
@@ -200,7 +206,9 @@ public class CarpeDiemController extends Application {
                         Log.d("RxGetEventList","SIZE : "+Integer.toString(carpeDiemListEventObject.eventList.size()));
                         Log.d("RxGetEventList","");
                         for(CarpeDiemEventObject event : carpeDiemListEventObject.eventList){
-                            Log.d("RxGetEventList",event.getItemContents());
+//                            Log.d("RxGetEventList",event.getItemContents());
+                            CarpeDiemEventObject.item item = event.item;
+                            Events.add(new TimeEvent(item.getItemName(), 1200, true));
                         }
 
                     }
