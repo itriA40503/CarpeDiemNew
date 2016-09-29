@@ -18,6 +18,10 @@ public class CarpeDiemEventObject {
         return  code;
     }
 
+    public String getEventDesc(){
+        return event_description;
+    }
+
     public String getItemContents(){
         return  item_id+":"+item.item_type_id+":"+item.item_name+":"+item.item_description;
     }
@@ -30,6 +34,18 @@ public class CarpeDiemEventObject {
 
         public String getItemContent(){
             return item_id+":"+item_type_id+":"+item_name+":"+item_description;
+        }
+
+        public String getItemId(){
+            return item_id;
+        }
+
+        public String getItemName(){
+            return item_name;
+        }
+
+        public String getItemDesc(){
+            return item_description;
         }
 
     }
