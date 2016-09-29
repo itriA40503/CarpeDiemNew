@@ -17,6 +17,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiController;
 import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemApi;
 import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemObject;
 import com.ccma.itri.org.tw.carpediem.UserData.UserData;
@@ -30,6 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.HttpException;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Observer;
@@ -37,7 +39,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class SplashActivity extends AppCompatActivity implements Callback<CarpeDiemObject> {
+public class SplashActivity extends AppCompatActivity {
     public static final int REQUEST_PERMISSION_PHONE_STATE = 0;
     private static final String data = "DATA";
     private String uuid, token;
@@ -45,11 +47,39 @@ public class SplashActivity extends AppCompatActivity implements Callback<CarpeD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        //# Check Permission
-        showPhoneStatePermission();
-//        UserData.getInstance().clearUserData();
-        openMainPage();
+
+        //# openMainPage After Check Permission
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        openMainPage();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+
+                    }
+                });
     }
+
+    Observable observable = Observable.create(new Observable.OnSubscribe<String>() {
+        @Override
+        public void call(Subscriber<? super String> subscriber) {
+
+            subscriber.onNext("Check Permission");
+            //# Check Permission
+            showPhoneStatePermission();
+            subscriber.onNext("Check Permission END");
+            subscriber.onCompleted();
+        }
+    });
 
     private void showPhoneStatePermission() {
         int permissionCheck = ContextCompat.checkSelfPermission(
@@ -62,9 +92,8 @@ public class SplashActivity extends AppCompatActivity implements Callback<CarpeD
                 requestPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PERMISSION_PHONE_STATE);
             }
         } else {
-//            Toast.makeText(this, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
-//            GetTokenFrom(getUUID());
-//            SaveUserInPref(getUUID(), token);
+            uuid = CarpeDiemController.getInstance().getUUID();
+            CarpeDiemController.getInstance().RxGetToken(uuid);
         }
     }
     @Override
@@ -77,8 +106,8 @@ public class SplashActivity extends AppCompatActivity implements Callback<CarpeD
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Permission Granted!", Toast.LENGTH_SHORT).show();
-//                    GetTokenFrom(getUUID());
-//                    SaveUserInPref(getUUID(), token);
+                    uuid = CarpeDiemController.getInstance().getUUID();
+                    CarpeDiemController.getInstance().RxGetToken(uuid);
                 } else {
                     Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
                 }
@@ -114,63 +143,5 @@ public class SplashActivity extends AppCompatActivity implements Callback<CarpeD
         },800);
     }
 
-    @Override
-    public void onResponse(Call<CarpeDiemObject> call, Response<CarpeDiemObject> response) {
-        int code = response.code();
-        Log.d("Response Code", String.valueOf(code));
-
-        if (code == 200) {
-            CarpeDiemObject user = response.body();
-            Log.d("Got the Token:", user.getToken());
-            token = user.getToken();
-//            Toast.makeText(this, "Got the Token:" + user.getToken(), Toast.LENGTH_LONG).show();
-        }else if(code == 401){
-            CarpeDiemObject user = response.body();
-            try {
-                String errorBody = response.errorBody().string();
-//                Log.d("Msg", errorBody);
-                Gson gson = new Gson();
-                CarpeDiemObject ObjectFromGson = gson.fromJson(errorBody,CarpeDiemObject.class);
-                Log.d("Got the Token:",ObjectFromGson.getToken());
-                token = ObjectFromGson.getToken();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-//            Toast.makeText(this, "Got the User:" + user.getCode(), Toast.LENGTH_LONG).show();
-        } else {
-            Log.e("Response Msg",response.message());
-            Toast.makeText(this, "Did not work: " + String.valueOf(code), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onFailure(Call<CarpeDiemObject> call, Throwable t) {
-        Log.d("Throwable",call.request().url().toString());
-    }
-
-    public void GetTokenFromUUID(String uuid){
-        Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-                .create();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(CarpeDiemApi.ENDPOINT)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        CarpeDiemApi carpeDiemAPI = retrofit.create(CarpeDiemApi.class);
-
-        Call<CarpeDiemObject> call = carpeDiemAPI.getToken(uuid);
-        call.enqueue(this);
-
-    }
-
-    public void SaveUserInPref(String uuid, String token){
-        if(UserData.getInstance().checkUUID()){
-            Log.d("checkUUID", "TRUE");
-        }else {
-            Log.d("checkUUID", "FALSE");
-            UserData.getInstance().saveUser(uuid, token);
-        }
-    }
 
 }
