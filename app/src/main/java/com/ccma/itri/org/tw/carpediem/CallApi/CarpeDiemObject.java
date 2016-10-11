@@ -5,12 +5,12 @@ package com.ccma.itri.org.tw.carpediem.CallApi;
  */
 //# Map the Json keys to the Object
 
-public class CarpeDiemObject {
+public class CarpeDiemObject extends ApiGeneralResult{
     String Satus;
     String token;
     String login;
     String name;
-    int code;
+//    int code;
     @Override
     public String toString() {
         return login;
@@ -20,7 +20,7 @@ public class CarpeDiemObject {
         return  token;
     }
 
-    public int getCode(){
-        return  code;
-    }
+//    public int getCode(){
+//        return  code;
+//    }
 }
