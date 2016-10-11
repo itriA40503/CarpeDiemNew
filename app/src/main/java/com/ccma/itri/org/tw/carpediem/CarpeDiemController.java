@@ -1,14 +1,17 @@
 package com.ccma.itri.org.tw.carpediem;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.provider.CalendarContract;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiController;
 import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemEventObject;
@@ -24,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -34,6 +38,7 @@ import rx.schedulers.Schedulers;
 public class CarpeDiemController extends Application {
     public static final String TAG = CarpeDiemController.class.getSimpleName();
     private static CarpeDiemController Instance;
+    public static String UUID,TOKEN;
     public List<TimeEvent> Events;
 
     @Override
@@ -46,7 +51,6 @@ public class CarpeDiemController extends Application {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         BroadcastReceiver mReceiver = new ScreenReceiver();
         registerReceiver(mReceiver, filter);
-
         //# Setting TimeEvents
         Events = new ArrayList<TimeEvent>();
 //        Events.add(new TimeEvent("FisrtEvent", 5000, false));
@@ -101,13 +105,14 @@ public class CarpeDiemController extends Application {
     }
 
     public String getUUID(){
+
         TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String android_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         String tmDevice = "" + tManager.getDeviceId();
         String tmSerial = "" + tManager.getSimSerialNumber();
         UUID deviceUuid = new UUID(android_id.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
         String uniqueId = deviceUuid.toString();
-
+        UUID = uniqueId;
         return uniqueId;
     }
 
@@ -121,13 +126,76 @@ public class CarpeDiemController extends Application {
         }
     }
 
-    public void RxGetToken(final String uuid){
-        ApiController.getInstance().getToken(uuid)
+    private void SaveUserTokenInPref(String token){
+        Log.d("SaveUserInPref","");
+        UserData.getInstance().saveUserToken(token);
+    }
+
+    public void RxGetTokenCreate(final String uuid,final Activity activity){
+        ApiController.getInstance().getTokenPOST(uuid)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CarpeDiemObject>() {
-                    final static String TAG = "GETTOKEN";
-                    private String TOKEN;
+                    @Override
+                    public void onCompleted() {
+                        Log.d("RxGetTokenCreate","onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("RxGetTokenCreate","onError");
+//                        if (e instanceof HttpException) {
+//                            // We had non-2XX http error
+//                        }
+//                        if (e instanceof IOException) {
+//                            // A network or conversion error happened
+//                        }
+
+                        try {
+//                            Log.d("getTokenPOST onError",((HttpException) e).response().headers().toString());
+//                            Log.d("getTokenPOST onError",((HttpException) e).response().errorBody().string());
+//                            Log.d("getTokenPOST onError",((HttpException) e).response().raw().toString());
+//
+                            //# Get errorBody to gson
+                            String errorBody = ((HttpException) e).response().errorBody().string();
+                            Gson gson = new Gson();
+                            CarpeDiemObject ObjectFromGson = gson.fromJson(errorBody,CarpeDiemObject.class);
+                            if(ObjectFromGson.getCode() == 1){
+                                TOKEN = ObjectFromGson.getToken();
+                                Log.d(TAG, "401 : " + TOKEN);
+                                if(TOKEN != null){
+                                    SaveUserInPref(uuid, TOKEN);
+                                    RxGetToken(uuid, activity);
+//                                    RxGetToken()
+                                }else {
+                                    Log.d("RxGetTokenCreate","TOKEN is NULL");
+                                }
+                            }else if(ObjectFromGson.getCode() == 0){
+                                Log.d(TAG, "Parameter error");
+                            }else if(ObjectFromGson.getCode() == 2){
+                                Log.d(TAG, "Other error");
+                            }
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onNext(CarpeDiemObject carpeDiemObject) {
+                        Log.d("getTokenPOST","onNext");
+                        RxGetToken(uuid, activity);
+                    }
+                });
+    }
+
+    public void RxGetToken(final String uuid,final Activity activity){
+        showToast("Singin GetToken");
+        ApiController.getInstance().SiginByUUID(uuid)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CarpeDiemObject>() {
+                    final static String TAG = "SINGIN GETTOKEN";
+//                    private String TOKEN;
                     @Override
                     public void onCompleted() {
 
@@ -137,27 +205,32 @@ public class CarpeDiemController extends Application {
                     @Override
                     public void onError(Throwable e) {
                         try {
-//                            Log.d("onError",((HttpException) e).response().headers().toString());
-//                            Log.d("onError",((HttpException) e).response().errorBody().string());
-//                            Log.d("onError",((HttpException) e).response().raw().toString());
-//
+//                            Log.d("RxGetToken onError",((HttpException) e).response().headers().toString());
+//                            Log.d("RxGetToken onError",((HttpException) e).response().errorBody().string());
+//                            Log.d("RxGetToken onError",((HttpException) e).response().raw().toString());
+
                             //# Get errorBody to gson
                             String errorBody = ((HttpException) e).response().errorBody().string();
+                            Log.d(TAG,errorBody);
                             Gson gson = new Gson();
                             CarpeDiemObject ObjectFromGson = gson.fromJson(errorBody,CarpeDiemObject.class);
-                            if(ObjectFromGson.getCode().equals(1)){
-                                TOKEN = ObjectFromGson.getToken();
-                                Log.d(TAG, "401 : " + TOKEN);
-                                if(TOKEN != null){
-                                    SaveUserInPref(uuid, TOKEN);
-                                }else {
-                                    Log.d("GetToken","TOKEN is NULL");
-                                }
-                            }else if(ObjectFromGson.getCode().equals("0")){
+                            if(ObjectFromGson.getCode() == 1){
+                                Log.d(TAG,"The User doesn't exists");
+                                RxGetTokenCreate(uuid, activity);
+//                                TOKEN = ObjectFromGson.getToken();
+//                                Log.d(TAG, "401 : " + TOKEN);
+//                                if(TOKEN != null){
+//                                    SaveUserInPref(uuid, TOKEN);
+//                                    RxGetEventList(TOKEN, activity);
+//                                }else {
+//                                    Log.d("GetToken","TOKEN is NULL");
+//                                }
+                            }else if(ObjectFromGson.getCode() == 0){
                                 Log.d(TAG, "Parameter error");
-                            }else if(ObjectFromGson.getCode().equals("2")){
+                            }else if(ObjectFromGson.getCode() == 2){
                                 Log.d(TAG, "Other error");
                             }
+                            ObjectFromGson = null;
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -165,10 +238,11 @@ public class CarpeDiemController extends Application {
                     }
                     @Override
                     public void onNext(CarpeDiemObject carpeDiemObject) {
+                        Log.d(TAG,"onNext");
                         TOKEN = carpeDiemObject.getToken();
                         if(TOKEN != null){
                             SaveUserInPref(uuid, TOKEN);
-                            RxGetEventList(TOKEN);
+                            RxGetEventList(TOKEN, activity);
                         }else {
                             Log.d("GetToken","TOKEN is NULL");
                         }
@@ -177,14 +251,21 @@ public class CarpeDiemController extends Application {
                 });
     }
 
-    public void RxGetEventList(String token) {
+//    Observable<CarpeDiemObject> singinGetToken(String uuid){
+//        return ApiController.getInstance().SiginByUUID(uuid)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread());
+//    }
+
+    public void RxGetEventList(String token, final Activity activity) {
+        showToast("Get EventList");
         ApiController.getInstance().getEventList(token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CarpeDiemListEventObject>() {
                     @Override
                     public void onCompleted() {
-
+                        OpenMainPage(activity);
                     }
 
                     @Override
@@ -199,6 +280,7 @@ public class CarpeDiemController extends Application {
                         CarpeDiemEventObject ObjectFromGson = gson.fromJson(errorBody,CarpeDiemEventObject.class);
                         Log.d("RxGetEventList","CODE : "+ObjectFromGson.getCode());
                         Log.d("RxGetEventList","onERROR ");
+                        ObjectFromGson = null;
                     }
 
                     @Override
@@ -210,8 +292,30 @@ public class CarpeDiemController extends Application {
                             CarpeDiemEventObject.item item = event.item;
                             Events.add(new TimeEvent(item.getItemName(), 1200, true));
                         }
-
+                        Events.add(new TimeEvent("Eeny",5000,true));
+                        Events.add(new TimeEvent("meeny",6000,true));
+                        Events.add(new TimeEvent("miny",5000,false));
+                        Events.add(new TimeEvent("moe",5000,false));
                     }
                 });
+    }
+
+    public void OpenMainPage(final Activity activity){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(activity.getApplication(), MainActivity.class);
+
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                activity.finish();
+                Log.d("OpenMainPage","finish");
+            }
+        },800);
+    }
+
+    public void showToast(String text){
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 }
