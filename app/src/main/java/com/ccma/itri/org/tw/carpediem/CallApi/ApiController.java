@@ -1,9 +1,12 @@
 package com.ccma.itri.org.tw.carpediem.CallApi;
 
+import com.ccma.itri.org.tw.carpediem.CarpeDiemController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+
+import javax.net.ssl.SSLSocketFactory;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -17,10 +20,12 @@ public class ApiController {
     Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
             .create();
+
     public final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(CarpeDiemApi.ENDPOINT)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .client(SSLTrustClient.getClient())
             .build();
 
     public static ApiController mInstance;
@@ -37,9 +42,13 @@ public class ApiController {
         mAPI = retrofit.create(CarpeDiemApi.class);
     }
 
-    public Observable<CarpeDiemObject>getToken(String uuid){
+    public Observable<CarpeDiemObject>getTokenPOST(String uuid){
+        return  mAPI.getTokenPOST(uuid);
+    }
+
+    public Observable<CarpeDiemObject>SiginByUUID(String uuid){
 //        return mAPI.getTokenOb(uuid);
-        return mAPI.getTokenGET(uuid);
+        return mAPI.getSiginByUUID(uuid);
     }
 
     public Observable<CarpeDiemObject>sigin(String uuid){
