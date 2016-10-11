@@ -10,7 +10,7 @@ public class CarpeDiemObject {
     String token;
     String login;
     String name;
-    String code;
+    int code;
     @Override
     public String toString() {
         return login;
@@ -20,7 +20,7 @@ public class CarpeDiemObject {
         return  token;
     }
 
-    public String getCode(){
+    public int getCode(){
         return  code;
     }
 }
