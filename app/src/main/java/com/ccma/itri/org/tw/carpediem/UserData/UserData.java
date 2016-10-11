@@ -18,6 +18,10 @@ class User {
     public User(){
     }
 
+    public User(String token){
+        this._token = token;
+    }
+
     public User(String uuid, String token){
         this._uuid = uuid;
         this._token = token;
@@ -93,7 +97,6 @@ public class UserData {
     public String getUserUUID(){
 //        Log.d("user.uuid",_user._uuid.toString());
         if(_user._uuid == null){
-
             return  "No value";
         }
         return  _user._uuid;
@@ -113,6 +116,14 @@ public class UserData {
         userEditor.putString("token", token);
         userEditor.commit();
     }
+
+    public void saveUserToken(String token){
+        Log.d("saveUserToken",token);
+        _user = new User(token);
+        userEditor.putString("token", token);
+        userEditor.commit();
+    }
+
     public void clearUserData(){
         Log.d("UserData","CLEAR !!!");
         _clear();
