@@ -15,8 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiController;
+import com.ccma.itri.org.tw.carpediem.CarpeDiemController;
 import com.ccma.itri.org.tw.carpediem.EventObject.TimeEvent;
 import com.ccma.itri.org.tw.carpediem.R;
+import com.ccma.itri.org.tw.carpediem.UserData.UserData;
 
 /**
  * Created by A40503 on 2016/9/21.
@@ -53,6 +56,8 @@ public class TimeEventAdapter extends BaseArrayAdapter<TimeEvent>{
         if(event.getStatus() == event.END){
             holder.layoutReward.setVisibility(View.VISIBLE);
             holder.layoutStart.setVisibility(View.GONE);
+            //# PUT event complete
+            CarpeDiemController.getInstance().completeEvent(event.mEventName, UserData.getInstance().getUserToken());
         }else if(event.getStatus() == event.RUNNING){
             holder.imgBtnStart.setImageResource(R.drawable.clock);
         }
@@ -137,6 +142,9 @@ public class TimeEventAdapter extends BaseArrayAdapter<TimeEvent>{
                 public void onClick(View v) {
                     imgBtnStart.setImageResource(R.drawable.clock);
                     getItem(position).startEvent();
+                    //# PUT event Start
+                    Log.d("UserDataGetToken",UserData.getInstance().getUserToken());
+                    CarpeDiemController.getInstance().startEvent(getItem(position).mEventName, UserData.getInstance().getUserToken());
 //                    getItem(position).getTimer().resume();
                 }
             });
