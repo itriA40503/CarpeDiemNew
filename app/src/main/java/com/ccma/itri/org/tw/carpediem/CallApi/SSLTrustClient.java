@@ -23,7 +23,7 @@ public class SSLTrustClient {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient sClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
-                .connectTimeout(8, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .build();
 
