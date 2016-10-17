@@ -5,13 +5,14 @@ package com.ccma.itri.org.tw.carpediem.CallApi;
  */
 public class CarpeDiemEventObject {
     String Satus,code;
-    String event_list_id;
-    String event_name;
-    String event_description;
-    String beacon_id;
-    String time_created;
-    String item_id;
-    String advertiser_id;
+    String id;
+    String eventId;
+    String name;
+    String description;
+    String beaconId;
+    String createdAt;
+    String advertiserId;
+
     public item item;
 
     public String getCode(){
@@ -19,33 +20,37 @@ public class CarpeDiemEventObject {
     }
 
     public String getEventDesc(){
-        return event_description;
+        return description;
+    }
+
+    public String getEventId(){
+        return eventId;
     }
 
     public String getItemContents(){
-        return  item_id+":"+item.item_type_id+":"+item.item_name+":"+item.item_description;
+        return  item.id+":"+item.name+":"+item.description;
     }
 
     public class item{
-        String item_id;
-        String item_type_id;
-        String item_name;
-        String item_description;
+        String id;
+        String typeId;
+        String name;
+        String description;
 
         public String getItemContent(){
-            return item_id+":"+item_type_id+":"+item_name+":"+item_description;
+            return id+":"+typeId+":"+name+":"+description;
         }
 
         public String getItemId(){
-            return item_id;
+            return id;
         }
 
         public String getItemName(){
-            return item_name;
+            return name;
         }
 
         public String getItemDesc(){
-            return item_description;
+            return description;
         }
 
     }
