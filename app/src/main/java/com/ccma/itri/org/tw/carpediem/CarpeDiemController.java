@@ -14,6 +14,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiController;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.EventLists;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.UserEventList;
 import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemEventObject;
 import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemListEventObject;
 import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemObject;
@@ -208,7 +210,7 @@ public class CarpeDiemController extends Application {
 //                            Log.d("RxGetToken onError",((HttpException) e).response().headers().toString());
 //                            Log.d("RxGetToken onError",((HttpException) e).response().errorBody().string());
 //                            Log.d("RxGetToken onError",((HttpException) e).response().raw().toString());
-
+//                            Log.d("RxGetToken","onError");
                             //# Get errorBody to gson
                             String errorBody = ((HttpException) e).response().errorBody().string();
                             Log.d(TAG,errorBody);
@@ -242,7 +244,7 @@ public class CarpeDiemController extends Application {
                         TOKEN = carpeDiemObject.getToken();
                         if(TOKEN != null){
                             SaveUserInPref(uuid, TOKEN);
-                            RxGetEventList(TOKEN, activity);
+                            RxGetNewEventList(TOKEN, activity);
                         }else {
                             Log.d("GetToken","TOKEN is NULL");
                         }
@@ -290,12 +292,55 @@ public class CarpeDiemController extends Application {
                         for(CarpeDiemEventObject event : carpeDiemListEventObject.eventList){
 //                            Log.d("RxGetEventList",event.getItemContents());
                             CarpeDiemEventObject.item item = event.item;
-                            Events.add(new TimeEvent(item.getItemName(), 1200, true));
+                            Events.add(new TimeEvent(event.getEventId(), 1200, true));
                         }
-                        Events.add(new TimeEvent("Eeny",5000,true));
-                        Events.add(new TimeEvent("meeny",6000,true));
-                        Events.add(new TimeEvent("miny",5000,false));
-                        Events.add(new TimeEvent("moe",5000,false));
+//                        Events.add(new TimeEvent("Eeny",5000,true));
+//                        Events.add(new TimeEvent("meeny",6000,true));
+//                        Events.add(new TimeEvent("miny",5000,false));
+//                        Events.add(new TimeEvent("moe",5000,false));
+                    }
+                });
+    }
+
+    public void RxGetNewEventList(String token, final Activity activity) {
+        showToast("Get EventList");
+        ApiController.getInstance().getNewEventList(token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<EventLists>() {
+                    @Override
+                    public void onCompleted() {
+                        OpenMainPage(activity);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        String errorBody = null;
+                        try {
+                            errorBody = ((HttpException) e).response().errorBody().string();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                        Gson gson = new Gson();
+                        CarpeDiemEventObject ObjectFromGson = gson.fromJson(errorBody,CarpeDiemEventObject.class);
+                        Log.d("RxGetEventList","CODE : "+ObjectFromGson.getCode());
+                        Log.d("RxGetEventList","onERROR ");
+                        ObjectFromGson = null;
+                    }
+
+                    @Override
+                    public void onNext(EventLists carpeDiemListEventObject) {
+                        Log.d("RxGetEventList","SIZE : "+Integer.toString(carpeDiemListEventObject.userEventList.size()));
+                        Log.d("RxGetEventList","");
+                        for(UserEventList event : carpeDiemListEventObject.userEventList){
+//                            Log.d("RxGetEventList",event.getItemContents());
+//                            CarpeDiemEventObject.item item = event.item;
+                            Events.add(new TimeEvent(event.getId(), 1200, true));
+                        }
+//                        Events.add(new TimeEvent("Eeny",5000,true));
+//                        Events.add(new TimeEvent("meeny",6000,true));
+//                        Events.add(new TimeEvent("miny",5000,false));
+//                        Events.add(new TimeEvent("moe",5000,false));
                     }
                 });
     }
@@ -317,5 +362,71 @@ public class CarpeDiemController extends Application {
 
     public void showToast(String text){
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    public void startEvent(String eventId, String token){
+        ApiController.getInstance().startEvent(eventId, token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CarpeDiemObject>(){
+                    @Override
+                    public void onCompleted() {
+                        Log.d("startEvent","onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (e instanceof HttpException) {
+                            // We had non-2XX http error
+                            Log.d("startEvent","HttpException");
+
+                        }
+                        if (e instanceof IOException) {
+                            Log.d("startEvent","IOException");
+                            Log.d("startEvent",e.toString());
+                            Log.d("startEvent","OK");
+                            // A network or conversion error happened
+                        }
+
+                    }
+
+                    @Override
+                    public void onNext(CarpeDiemObject carpeDiemObject) {
+                        Log.d("startEvent","onNext");
+                    }
+                });
+    }
+
+    public void completeEvent(String eventId, String token){
+        ApiController.getInstance().completeEvent(eventId,token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CarpeDiemObject>(){
+                    @Override
+                    public void onCompleted() {
+                        Log.d("completeEvent","onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (e instanceof HttpException) {
+                            // We had non-2XX http error
+                            Log.d("completeEvent","HttpException");
+
+                        }
+                        if (e instanceof IOException) {
+                            Log.d("completeEvent","IOException");
+                            Log.d("completeEvent",e.toString());
+//                            Log.d("startEvent","OK");
+                            // A network or conversion error happened
+                        }
+
+                    }
+
+                    @Override
+                    public void onNext(CarpeDiemObject carpeDiemObject) {
+                        Log.d("completeEvent","onNext");
+                    }
+                });
     }
 }
