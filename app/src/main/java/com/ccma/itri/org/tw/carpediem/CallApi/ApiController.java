@@ -1,5 +1,6 @@
 package com.ccma.itri.org.tw.carpediem.CallApi;
 
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.EventLists;
 import com.ccma.itri.org.tw.carpediem.CarpeDiemController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -58,4 +59,17 @@ public class ApiController {
     public Observable<CarpeDiemListEventObject>getEventList(String token){
         return mAPI.getEventList(token);
     }
+
+    public Observable<EventLists>getNewEventList(String token){
+        return mAPI.getNewEventList(token);
+    }
+
+    public Observable<CarpeDiemObject>startEvent(String eventId, String token){
+        return mAPI.startEvent(eventId, token);
+    }
+
+    public Observable<CarpeDiemObject>completeEvent(String eventId, String token){
+        return mAPI.completeEvent(eventId, token);
+    }
+
 }
