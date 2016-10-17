@@ -1,11 +1,14 @@
 package com.ccma.itri.org.tw.carpediem.CallApi;
 
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.EventLists;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -40,4 +43,18 @@ public interface CarpeDiemApi {
     @Headers({"Accept: application/json"})
     @GET("/event")
     Observable<CarpeDiemListEventObject>getEventList(@Query(value = "access_token", encoded = true) String  token);
+
+    @Headers({"Accept: application/json"})
+    @GET("/event")
+    Observable<EventLists>getNewEventList(@Query(value = "access_token", encoded = true) String  token);
+
+    @FormUrlEncoded
+    @Headers({"Accept: application/json"})
+    @PUT("/event/{id}/start")
+    Observable<CarpeDiemObject>startEvent(@Path("id") String eventId, @Field(value = "access_token", encoded = true) String  token);
+
+    @FormUrlEncoded
+    @Headers({"Accept: application/json"})
+    @PUT("/event/{id}/complete")
+    Observable<CarpeDiemObject>completeEvent(@Path("id") String eventId, @Field(value = "access_token", encoded = true) String  token);
 }
