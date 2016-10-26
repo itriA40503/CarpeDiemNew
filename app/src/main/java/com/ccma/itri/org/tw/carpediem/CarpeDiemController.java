@@ -7,18 +7,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
-import android.provider.CalendarContract;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiController;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.ArrayUserItemList;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.EventLists;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.UserEventList;
-import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemEventObject;
-import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemListEventObject;
-import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemObject;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.UserItemList;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemEventObject;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemListEventObject;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemObject;
 import com.ccma.itri.org.tw.carpediem.EventObject.TimeEvent;
 import com.ccma.itri.org.tw.carpediem.UserData.UserData;
 import com.google.gson.Gson;
@@ -29,7 +30,6 @@ import java.util.List;
 import java.util.UUID;
 
 import retrofit2.adapter.rxjava.HttpException;
-import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -53,6 +53,8 @@ public class CarpeDiemController extends Application {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         BroadcastReceiver mReceiver = new ScreenReceiver();
         registerReceiver(mReceiver, filter);
+
+        ApiController.getInstance();
         //# Setting TimeEvents
         Events = new ArrayList<TimeEvent>();
 //        Events.add(new TimeEvent("FisrtEvent", 5000, false));
@@ -244,6 +246,7 @@ public class CarpeDiemController extends Application {
                         TOKEN = carpeDiemObject.getToken();
                         if(TOKEN != null){
                             SaveUserInPref(uuid, TOKEN);
+                            RxGetItemList(TOKEN);
                             RxGetNewEventList(TOKEN, activity);
                         }else {
                             Log.d("GetToken","TOKEN is NULL");
@@ -292,7 +295,7 @@ public class CarpeDiemController extends Application {
                         for(CarpeDiemEventObject event : carpeDiemListEventObject.eventList){
 //                            Log.d("RxGetEventList",event.getItemContents());
                             CarpeDiemEventObject.item item = event.item;
-                            Events.add(new TimeEvent(event.getEventId(), 1200, true));
+                            Events.add(new TimeEvent(event.getEventId(), event.getEventId(), 1200, true));
                         }
 //                        Events.add(new TimeEvent("Eeny",5000,true));
 //                        Events.add(new TimeEvent("meeny",6000,true));
@@ -335,12 +338,51 @@ public class CarpeDiemController extends Application {
                         for(UserEventList event : carpeDiemListEventObject.userEventList){
 //                            Log.d("RxGetEventList",event.getItemContents());
 //                            CarpeDiemEventObject.item item = event.item;
-                            Events.add(new TimeEvent(event.getId(), 1200, true));
+                            Events.add(new TimeEvent(event.getId(), event.getId(), Long.parseLong(event.getStatus())*1000, true));
+//                            Events.add(new TimeEvent(event.getId(), event.getId(), event.getCompletedTimes()*1000, true));
                         }
 //                        Events.add(new TimeEvent("Eeny",5000,true));
 //                        Events.add(new TimeEvent("meeny",6000,true));
 //                        Events.add(new TimeEvent("miny",5000,false));
 //                        Events.add(new TimeEvent("moe",5000,false));
+                    }
+                });
+    }
+
+    public void RxGetItemList(String token){
+        ApiController.getInstance().mAPI.getItemList(token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ArrayUserItemList>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        String errorBody = null;
+                        try {
+                            errorBody = ((HttpException) e).response().errorBody().string();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                        Gson gson = new Gson();
+                        CarpeDiemEventObject ObjectFromGson = gson.fromJson(errorBody,CarpeDiemEventObject.class);
+                        Log.d("RxGetItemList","CODE : "+ObjectFromGson.getCode());
+                        Log.d("RxGetItemList","onERROR ");
+                        ObjectFromGson = null;
+                    }
+
+                    @Override
+                    public void onNext(ArrayUserItemList userItemLists) {
+                        Log.d("RxGetItemList","SIZE : "+Integer.toString(userItemLists.userItemList.size()));
+                        Log.d("RxGetItemList","");
+                        for(UserItemList item : userItemLists.userItemList){
+//                            Log.d("RxGetEventList",event.getItemContents());
+//                            CarpeDiemEventObject.item item = event.item;
+                            Events.add(new TimeEvent(item.getId(), item.getItem().getItemName(), 5000, true));
+                        }
                     }
                 });
     }
