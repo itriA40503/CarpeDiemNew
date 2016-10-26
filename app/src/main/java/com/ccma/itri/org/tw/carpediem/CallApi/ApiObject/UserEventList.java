@@ -7,6 +7,9 @@ package com.ccma.itri.org.tw.carpediem.CallApi.ApiObject;
 public class UserEventList {
     String id;
     String eventId;
+    String status;
+    String cumulativeTime; //#  1 = idle, 2 = start, 3 = complete, 4 = end
+    public int completedTimes;
     String createdAt;
 
     public String getId(){
@@ -16,4 +19,10 @@ public class UserEventList {
     public String getEventId(){
         return eventId;
     }
+
+    public String getStatus(){
+        return status;
+    }
+
+    public long getCompletedTimes(){ return Long.valueOf(completedTimes);}
 }
