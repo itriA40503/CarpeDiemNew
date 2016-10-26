@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/tab_events"
+        icon="@drawable/test_backpack"
+        title="EventLists"
+        barColorWhenSelected="@color/bluelight"/>
+    <tab
+        id="@+id/tab_bagpack"
+        icon="@drawable/test_backpack"
+        title="Bagpack"
+        barColorWhenSelected="@color/greenlight"/>
+    <tab
+        id="@+id/tab_news"
+        icon="@drawable/test_backpack"
+        title="News"
+        barColorWhenSelected="@color/colorAccent"/>
+    <tab
+        id="@+id/tab_more"
+        icon="@drawable/test_backpack"
+        title="More"
+        barColorWhenSelected="@color/darkgrey"/>
+</tabs>

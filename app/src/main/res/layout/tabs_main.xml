@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/tabs_main_view">
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:pstsIndicatorColor="@color/dark_red"
+        app:pstsDividerColor="@color/transparent"
+        android:textColor="@color/dark_red"
+        android:textSize="20dp"
+        app:pstsIndicatorHeight="3dp"
+        app:pstsUnderlineHeight="0dp"
+        app:pstsTabPaddingLeftRight="0dp"/>
+    <com.ccma.itri.org.tw.carpediem.ViewPager.CarpeDiemViewPager
+        android:id="@+id/main_pager"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:layout_below="@+id/tabs"/>
+    <View
+        android:layout_below="@id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="#000000"/>
+
+</LinearLayout>
