@@ -1,11 +1,18 @@
 package com.ccma.itri.org.tw.carpediem.CallApi;
 
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.ArrayUserItemList;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemListEventObject;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemObject;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.EventLists;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.UserItemList;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -57,4 +64,8 @@ public interface CarpeDiemApi {
     @Headers({"Accept: application/json"})
     @PUT("/event/{id}/complete")
     Observable<CarpeDiemObject>completeEvent(@Path("id") String eventId, @Field(value = "access_token", encoded = true) String  token);
+
+    @Headers({"Accept: application/json"})
+    @GET("/item")
+    Observable<ArrayUserItemList>getItemList(@Header("x-access-token") String token);
 }
