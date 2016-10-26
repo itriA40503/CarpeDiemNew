@@ -1,7 +1,5 @@
 package com.ccma.itri.org.tw.carpediem.CallApi.ApiObject;
 
-import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemEventObject;
-
 import java.util.ArrayList;
 
 /**

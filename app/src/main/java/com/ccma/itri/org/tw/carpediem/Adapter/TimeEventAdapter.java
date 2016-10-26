@@ -57,7 +57,7 @@ public class TimeEventAdapter extends BaseArrayAdapter<TimeEvent>{
             holder.layoutReward.setVisibility(View.VISIBLE);
             holder.layoutStart.setVisibility(View.GONE);
             //# PUT event complete
-            CarpeDiemController.getInstance().completeEvent(event.mEventName, UserData.getInstance().getUserToken());
+            CarpeDiemController.getInstance().completeEvent(event.mId, UserData.getInstance().getUserToken());
         }else if(event.getStatus() == event.RUNNING){
             holder.imgBtnStart.setImageResource(R.drawable.clock);
         }
@@ -144,7 +144,7 @@ public class TimeEventAdapter extends BaseArrayAdapter<TimeEvent>{
                     getItem(position).startEvent();
                     //# PUT event Start
                     Log.d("UserDataGetToken",UserData.getInstance().getUserToken());
-                    CarpeDiemController.getInstance().startEvent(getItem(position).mEventName, UserData.getInstance().getUserToken());
+                    CarpeDiemController.getInstance().startEvent(getItem(position).mId, UserData.getInstance().getUserToken());
 //                    getItem(position).getTimer().resume();
                 }
             });

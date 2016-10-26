@@ -10,8 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import com.ccma.itri.org.tw.carpediem.UserData.UserData;
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +17,16 @@ import rx.Observable;
 import rx.Subscriber;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView text;
     protected UserData mUserDataManager;
     private FragmentManager fragmentMgr;
     private List<Fragment> mFragmentStack;
-    private FloatingActionMenu menuFAB;
+//    private FloatingActionMenu menuFAB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        text = (TextView)findViewById(R.id.textTest);
-        text.setText(getUserDataManager().getUserToken());
 
+        Log.d("MainActivity",getUserDataManager().getUserToken());
 
 //        Log.d("getUUI",getUserDataManager().getUserUUID());
 //        CarpeDiemController.getInstance().Events = new ArrayList<TimeEvent>();
@@ -41,35 +37,8 @@ public class MainActivity extends AppCompatActivity {
 //        getUserDataManager().clearUserData();
         mFragmentStack = new ArrayList<Fragment>();
         pushNewFragment(new CardFragment());
-        initFab();
     }
 
-    private void initFab(){
-//        menuFAB = (FloatingActionMenu)findViewById(R.id.menu_green);
-//        menuFAB.setOnClickListener(new View.OnClickListener() {
-//            @Override public void onClick(View v) {
-//                CarpeDiemController.getInstance().showToast("FAB");
-////                ContextCompat.getColor(MainActivity.this, R.color.light_grey);
-//                menuFAB.setClosedOnTouchOutside(true);
-//                menuFAB.hideMenuButton(false);
-//                menuFAB.toggle(true);
-//            }
-//        });
-
-//        final FloatingActionButton programFab1 = new FloatingActionButton(MainActivity.this);
-//        programFab1.setButtonSize(FloatingActionButton.SIZE_MINI);
-//
-//        menuFAB.addMenuButton(programFab1);
-//        programFab1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                programFab1.setLabelColors(ContextCompat.getColor(MainActivity.this, R.color.grey),
-//                        ContextCompat.getColor(MainActivity.this, R.color.light_grey),
-//                        ContextCompat.getColor(MainActivity.this, R.color.white_transparent));
-//                programFab1.setLabelTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
-//            }
-//        });
-    }
     protected UserData getUserDataManager() {
         if(mUserDataManager == null) {
             mUserDataManager = UserData.getInstance();

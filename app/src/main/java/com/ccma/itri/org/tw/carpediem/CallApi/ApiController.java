@@ -1,13 +1,10 @@
 package com.ccma.itri.org.tw.carpediem.CallApi;
 
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemListEventObject;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemObject;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.EventLists;
-import com.ccma.itri.org.tw.carpediem.CarpeDiemController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.util.ArrayList;
-
-import javax.net.ssl.SSLSocketFactory;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;

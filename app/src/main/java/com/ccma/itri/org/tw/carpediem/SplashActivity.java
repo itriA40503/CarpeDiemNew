@@ -11,26 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.ccma.itri.org.tw.carpediem.CallApi.ApiController;
-import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemApi;
-import com.ccma.itri.org.tw.carpediem.CallApi.CarpeDiemObject;
-import com.ccma.itri.org.tw.carpediem.CallApi.SSLTrustClient;
-import com.ccma.itri.org.tw.carpediem.UserData.UserData;
-import com.google.gson.Gson;
-
-import java.io.IOException;
-
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.HttpException;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -45,6 +26,7 @@ public class SplashActivity extends AppCompatActivity {
 //        UserData.getInstance().clearUserData();
         //# get UUID
         uuid = CarpeDiemController.getInstance().getUUID();
+//        CarpeDiemController.getInstance().RxGetTokenCreate(uuid,this);
 //        if(UserData.getInstance().getUserToken().equals("No Value")){
 //            CarpeDiemController.getInstance().RxGetTokenCreate(uuid);
 //        }
