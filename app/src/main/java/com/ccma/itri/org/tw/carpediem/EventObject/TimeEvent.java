@@ -18,6 +18,7 @@ public class TimeEvent {
     public static final int START=0, RUNNING=1, END=2;
     public int mStatus = START;
     public String mEventName, mReward;
+    public String mId;
     public long mTotalTime;
     public int mLogo, mType;
     public int mPrgressBarColor;
@@ -26,8 +27,9 @@ public class TimeEvent {
 
 
 
-    public TimeEvent (String eventName, long totalTime, boolean continuous){
+    public TimeEvent (String id, String eventName, long totalTime, boolean continuous){
         Log.d(TAG,"Create "+eventName);
+        mId = id;
         mEventName = eventName;
         mTotalTime = totalTime;
         mLogo = setLogoByName(mEventName);
