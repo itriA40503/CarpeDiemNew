@@ -21,6 +21,8 @@ import com.ccma.itri.org.tw.carpediem.EventObject.TimeEvent;
 import com.ccma.itri.org.tw.carpediem.R;
 import com.ccma.itri.org.tw.carpediem.UserData.UserData;
 
+import java.util.Random;
+
 /**
  * Created by A40503 on 2016/9/21.
  */
@@ -43,8 +45,9 @@ public class TimeEventAdapter extends BaseArrayAdapter<TimeEvent>{
 
 //        int [] logos = new int[]{R.drawable.pika3, R.drawable.pika, R.drawable.logo1, R.drawable.logo2, R.drawable.logo3, R.drawable.logo4, R.drawable.logo5, R.drawable.logo6};
 //        int log = logos[event.mLogo];
+        int types = (int)(Math.random()*4);
         holder.imgLogo.setImageResource(LogoByNumber(event.mLogo));
-
+        holder.imgType.setImageResource(getTypeImage(types));
         holder.title.setText(event.mEventName);
         holder.timeLeft.setText(event.getTimer().timeLeftString());
         holder.pTimeleft.setProgress(event.getTimer().progressLeft());
@@ -59,7 +62,7 @@ public class TimeEventAdapter extends BaseArrayAdapter<TimeEvent>{
             //# PUT event complete
             CarpeDiemController.getInstance().completeEvent(event.mId, UserData.getInstance().getUserToken());
         }else if(event.getStatus() == event.RUNNING){
-            holder.imgBtnStart.setImageResource(R.drawable.clock);
+            holder.imgBtnStart.setImageResource(R.drawable.event_clock);
         }
         return view;
     }
@@ -120,13 +123,28 @@ public class TimeEventAdapter extends BaseArrayAdapter<TimeEvent>{
         return Logo;
     }
 
+    private int getTypeImage(int num){
+        switch (num){
+            case 0:
+                return R.drawable.type_icon_birthday;
+            case 1:
+                return R.drawable.type_icon_discount;
+            case 2:
+                return R.drawable.type_icon_gift;
+            case 3:
+                return R.drawable.type_icon_one_plus_one;
+        }
+        return R.drawable.type1;
+    }
+
     public class TimeEventHolder{
         LinearLayout layoutStart, layoutReward;
         ProgressBar pTimeleft;
         TextView title, timeLeft;
-        ImageView imgLogo;
+        ImageView imgLogo, imgType;
         ImageButton imgBtnStart;
         public TimeEventHolder(final int position, View view){
+            imgType = (ImageView)view.findViewById(R.id.img_type);
             imgLogo = (ImageView)view.findViewById(R.id.img_logo);
             layoutStart = (LinearLayout)view.findViewById(R.id.ll1);
             layoutReward = (LinearLayout)view.findViewById(R.id.ll2);
@@ -140,7 +158,7 @@ public class TimeEventAdapter extends BaseArrayAdapter<TimeEvent>{
             imgBtnStart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    imgBtnStart.setImageResource(R.drawable.clock);
+                    imgBtnStart.setImageResource(R.drawable.event_clock);
                     getItem(position).startEvent();
                     //# PUT event Start
                     Log.d("UserDataGetToken",UserData.getInstance().getUserToken());
