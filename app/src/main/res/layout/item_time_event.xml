@@ -70,7 +70,7 @@
             android:layout_height="45dp"
             android:text="Start"
             android:background="@color/transparent"
-            android:src="@drawable/event_join"
+            android:src="@drawable/event_play"
             android:scaleType="fitCenter"
             android:id="@+id/imgbtn_start"/>
     </LinearLayout>
