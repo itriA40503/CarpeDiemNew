@@ -20,12 +20,14 @@ import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.UserItemList;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemEventObject;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemListEventObject;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemObject;
+import com.ccma.itri.org.tw.carpediem.EventObject.BackpackItem;
 import com.ccma.itri.org.tw.carpediem.EventObject.TimeEvent;
 import com.ccma.itri.org.tw.carpediem.UserData.UserData;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +44,7 @@ public class CarpeDiemController extends Application {
     private static CarpeDiemController Instance;
     public static String UUID,TOKEN;
     public List<TimeEvent> Events;
+    public List<BackpackItem> Items;
 
     @Override
     public void onCreate() {
@@ -57,6 +60,7 @@ public class CarpeDiemController extends Application {
         ApiController.getInstance();
         //# Setting TimeEvents
         Events = new ArrayList<TimeEvent>();
+        Items = new ArrayList<BackpackItem>();
 //        Events.add(new TimeEvent("FisrtEvent", 5000, false));
 //        Events.add(new TimeEvent("SecondEvent", 10000, false));
 //        Events.add(new TimeEvent("ContinuousEvent", 10000, true));
@@ -70,6 +74,8 @@ public class CarpeDiemController extends Application {
     public List<TimeEvent> getTimeEvents(){
         return Events;
     }
+
+    public List<BackpackItem> getBackPackItems(){return Items;}
 
     public void timeEventResume(){
         for(TimeEvent event : Events){
@@ -381,7 +387,8 @@ public class CarpeDiemController extends Application {
                         for(UserItemList item : userItemLists.userItemList){
 //                            Log.d("RxGetEventList",event.getItemContents());
 //                            CarpeDiemEventObject.item item = event.item;
-                            Events.add(new TimeEvent(item.getId(), item.getItem().getItemName(), 5000, true));
+                            Items.add(new BackpackItem(item.getItem().getItemName(),item.getItem().getItemDesc()));
+//                            Events.add(new TimeEvent(item.getId(), item.getItem().getItemName(), 5000, true));
                         }
                     }
                 });
@@ -391,7 +398,7 @@ public class CarpeDiemController extends Application {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(activity.getApplication(), MainActivity.class);
+                Intent intent = new Intent(activity.getApplication(), NewMainActivity.class);
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
