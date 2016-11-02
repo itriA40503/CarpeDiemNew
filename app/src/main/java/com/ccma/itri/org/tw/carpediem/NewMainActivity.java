@@ -1,5 +1,6 @@
 package com.ccma.itri.org.tw.carpediem;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -16,15 +17,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.ccma.itri.org.tw.carpediem.Adapter.ViewPagerAdpter;
 import com.ccma.itri.org.tw.carpediem.EventObject.TimeEvent;
 import com.ccma.itri.org.tw.carpediem.PagerFragment.FragmentPageTab1;
 import com.ccma.itri.org.tw.carpediem.PagerFragment.FragmentPageTab2;
-import com.ccma.itri.org.tw.carpediem.ViewPager.CarpeDiemViewPager;
+
+import com.ccma.itri.org.tw.carpediem.Scanner.ScanActivity;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,19 +45,20 @@ public class NewMainActivity extends AppCompatActivity {
     private List<Fragment> mFragments;
     private Controller controller;
     private Toolbar toolbar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_activity_main);
-        CarpeDiemController.getInstance().Events.add(new TimeEvent("1","FisrtEvent", 5000, false));
-        CarpeDiemController.getInstance().Events.add(new TimeEvent("1","SecondEvent", 10000, false));
-        CarpeDiemController.getInstance().Events.add(new TimeEvent("1","ContinuousEvent", 10000, true));
+//        CarpeDiemController.getInstance().Events.add(new TimeEvent("1","FisrtEvent", 5000, false));
+//        CarpeDiemController.getInstance().Events.add(new TimeEvent("1","SecondEvent", 10000, false));
+//        CarpeDiemController.getInstance().Events.add(new TimeEvent("1","ContinuousEvent", 10000, true));
 //        CarpeDiemViewPager carpeDiemViewPager = (CarpeDiemViewPager)findViewById(R.id.main_pager);
 //        adpter = new ViewPagerAdpter(getSupportFragmentManager());
 //        carpeDiemViewPager.setAdapter(adpter);
         mFragments = new ArrayList<>();
         mFragments.add(new CardFragment());
-        mFragments.add(new FragmentPageTab2());
+        mFragments.add(new BackpackFragment());
         mFragments.add(new FragmentPageTab1());
         mFragments.add(new FragmentPageTab2());
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -66,7 +69,9 @@ public class NewMainActivity extends AppCompatActivity {
         settingToolbar();
 
     }
+    private void showDialog(){
 
+    }
     private void settingToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -89,6 +94,9 @@ public class NewMainActivity extends AppCompatActivity {
             switch (item.getItemId()){
                 case R.id.scan:
                     CarpeDiemController.getInstance().showToast("SCAN");
+                    showDialog();
+                    Intent intent = new Intent(NewMainActivity.this, ScanActivity.class);
+                    startActivity(intent);
                     break;
             }
             return false;
@@ -98,26 +106,46 @@ public class NewMainActivity extends AppCompatActivity {
     private void BottomTabTest(){
         PagerBottomTabLayout pagerBottomTabLayout = (PagerBottomTabLayout) findViewById(R.id.bottomBar);
 
-        //用TabItemBuilder构建一个导航按钮
-        TabItemBuilder tabItemBuilder = new TabItemBuilder(this).create()
+        //# create bottom tab - events
+        TabItemBuilder tabEvents = new TabItemBuilder(this).create()
                 .setDefaultIcon(R.drawable.menu_home_icon_pickup)
                 .setText("Events")
                 .setSelectedColor(getResources().getColor(R.color.bluelight))
-                .setTag("A")
+                .setTag("Events")
                 .build();
-
-        //构建导航栏,得到Controller进行后续控制
+        //# create bottom tab - backpack
+        TabItemBuilder tabBackpack = new TabItemBuilder(this).create()
+                .setDefaultIcon(R.drawable.menu_backpack_icon_pickup)
+                .setText("Backpack")
+                .setSelectedColor(getResources().getColor(R.color.greenlight))
+                .setTag("Backpack")
+                .build();
+        //# create bottom tab - news
+        TabItemBuilder tabNews = new TabItemBuilder(this).create()
+                .setDefaultIcon(R.drawable.carpediem_logo)
+                .setText("News")
+                .setSelectedColor(getResources().getColor(R.color.orangelight))
+                .setTag("News")
+                .build();
+        //# create bottom tab - More
+        TabItemBuilder tabMore = new TabItemBuilder(this).create()
+                .setDefaultIcon(R.drawable.pika)
+                .setText("More")
+                .setSelectedColor(getResources().getColor(R.color.darkgrey))
+                .setTag("More")
+                .build();
+        //# build bottom tabs and control
         controller = pagerBottomTabLayout.builder()
-                .addTabItem(tabItemBuilder)
-                .addTabItem(R.drawable.menu_backpack_icon_pickup, "Backpack",getResources().getColor(R.color.greenlight))
-                .addTabItem(R.drawable.carpediem_logo, "News",getResources().getColor(R.color.orangelight))
-                .addTabItem(R.drawable.pika, "More",getResources().getColor(R.color.darkgrey))
+                .addTabItem(tabEvents)
+                .addTabItem(tabBackpack)
+                .addTabItem(tabNews)
+                .addTabItem(tabMore)
 //                .setMode(TabLayoutMode.HIDE_TEXT)
 //                .setMode(TabLayoutMode.CHANGE_BACKGROUND_COLOR)
                 .setMode(TabLayoutMode.HIDE_TEXT| TabLayoutMode.CHANGE_BACKGROUND_COLOR)
                 .build();
 
-//        controller.setMessageNumber("A",2);
+        controller.setMessageNumber("News",2);
 //        controller.setDisplayOval(0,true);
 
         controller.addTabItemClickListener(listener);
@@ -125,7 +153,7 @@ public class NewMainActivity extends AppCompatActivity {
     OnTabItemSelectListener listener = new OnTabItemSelectListener() {
         @Override
         public void onSelected(int index, Object tag){
-            Log.i("asd","onSelected:"+index+"   TAG: "+tag.toString());
+            Log.i("Tab","onSelected:"+index+"   TAG: "+tag.toString());
             switch (index){
                 case 0:
                     toolbar.setTitle("               (`へ´≠)");
@@ -135,6 +163,7 @@ public class NewMainActivity extends AppCompatActivity {
                     break;
                 case 2:
                     toolbar.setTitle("(ﾒﾟДﾟ)ﾒ        (`へ´≠)");
+                    controller.setMessageNumber("News",0);
                     break;
                 case 3:
                     toolbar.setTitle("(◓Д◒)✄╰⋃╯     ٩(ŏ﹏ŏ、)۶");
