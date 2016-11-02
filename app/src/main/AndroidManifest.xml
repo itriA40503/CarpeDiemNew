@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.ccma.itri.org.tw.carpediem">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
@@ -10,6 +12,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- TO get Web API -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- TO get Camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
 
     <application
@@ -19,20 +23,24 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:screenOrientation="portrait"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar"
+        tools:replace="android:name">
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"></activity>
         <activity android:name=".SplashActivity">
-
-        </activity>
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".NewMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".NewMainActivity">
+
+        </activity>
+        <activity android:name=".Scanner.ScanActivity"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
