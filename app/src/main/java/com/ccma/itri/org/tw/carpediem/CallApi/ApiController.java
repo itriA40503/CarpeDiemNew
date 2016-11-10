@@ -69,4 +69,8 @@ public class ApiController {
         return mAPI.completeEvent(eventId, token);
     }
 
+    public Observable<EventLists>getNewEventListWithLoc(String token, String lng, String lat){
+        return mAPI.getNewEventListWithLoc(token, lng, lat);
+    }
+
 }
