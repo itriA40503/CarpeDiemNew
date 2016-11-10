@@ -2,15 +2,23 @@ package com.ccma.itri.org.tw.carpediem;
 
 import android.Manifest;
 
+import android.content.Context;
 import android.content.DialogInterface;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -18,11 +26,23 @@ public class SplashActivity extends AppCompatActivity {
     public static final int REQUEST_PERMISSION_PHONE_STATE = 0;
     private static final String data = "DATA";
     private String uuid, token;
-    @Override
+    private boolean getService = false;     //是否已開啟定位服務
+    private String bestProvider = LocationManager.GPS_PROVIDER;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
+        //#取得系統定位服務
+        LocationManager status = (LocationManager) (this.getSystemService(Context.LOCATION_SERVICE));
+        if(status.isProviderEnabled(LocationManager.GPS_PROVIDER)|| status.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+        {
+            //#如果GPS或網路定位開啟，呼叫locationServiceInitial()更新位置
+            CarpeDiemController.getInstance().locationServiceInitial();
+        } else {
+            Toast.makeText(this, "請開啟定位服務", Toast.LENGTH_LONG).show();
+            getService = true; //#確認開啟定位服務
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)); //#開啟設定頁面
+        }
 //        UserData.getInstance().clearUserData();
         //# get UUID
         uuid = CarpeDiemController.getInstance().getUUID();
@@ -53,10 +73,7 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
     @Override
-    public void onRequestPermissionsResult(
-            int requestCode,
-            String permissions[],
-            int[] grantResults) {
+    public void onRequestPermissionsResult( int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION_PHONE_STATE:
                 if (grantResults.length > 0
