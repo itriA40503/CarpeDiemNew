@@ -12,6 +12,11 @@ public class UserEventList {
     public int completedTimes;
     String createdAt;
 
+    public UserEventList(String _id, String _eventId){
+        id = _id;
+        eventId = _eventId;
+    }
+
     public String getId(){
         return id;
     }
