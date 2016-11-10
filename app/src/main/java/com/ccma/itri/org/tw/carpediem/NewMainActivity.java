@@ -6,18 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.ccma.itri.org.tw.carpediem.Adapter.ViewPagerAdpter;
 import com.ccma.itri.org.tw.carpediem.EventObject.TimeEvent;
@@ -43,8 +40,9 @@ import me.majiajie.pagerbottomtabstrip.listener.OnTabItemSelectListener;
 public class NewMainActivity extends AppCompatActivity {
     private ViewPagerAdpter adpter;
     private List<Fragment> mFragments;
-    private Controller controller;
+//    private Controller controller;
     private Toolbar toolbar;
+    private TextView toolbarTitle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,7 +72,7 @@ public class NewMainActivity extends AppCompatActivity {
     }
     private void settingToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-
+        toolbarTitle = (TextView)findViewById(R.id.toolbar_title);
 //        toolbar.setLogo(R.drawable.carpediem_logo);
         toolbar.setTitle("(σﾟ∀ﾟ)σ CarpeDiem ヽ( ° ▽°)ノ");
 
@@ -122,33 +120,35 @@ public class NewMainActivity extends AppCompatActivity {
                 .build();
         //# create bottom tab - news
         TabItemBuilder tabNews = new TabItemBuilder(this).create()
-                .setDefaultIcon(R.drawable.carpediem_logo)
+                .setDefaultIcon(R.drawable.menu_news_icon_pickup)
                 .setText("News")
                 .setSelectedColor(getResources().getColor(R.color.orangelight))
                 .setTag("News")
                 .build();
         //# create bottom tab - More
-        TabItemBuilder tabMore = new TabItemBuilder(this).create()
-                .setDefaultIcon(R.drawable.pika)
-                .setText("More")
-                .setSelectedColor(getResources().getColor(R.color.darkgrey))
-                .setTag("More")
-                .build();
+//        TabItemBuilder tabMore = new TabItemBuilder(this).create()
+//                .setDefaultIcon(R.drawable.pika)
+//                .setText("More")
+//                .setSelectedColor(getResources().getColor(R.color.darkgrey))
+//                .setTag("More")
+//                .build();
         //# build bottom tabs and control
-        controller = pagerBottomTabLayout.builder()
+        CarpeDiemController.getInstance().controller = pagerBottomTabLayout.builder()
                 .addTabItem(tabEvents)
                 .addTabItem(tabBackpack)
                 .addTabItem(tabNews)
-                .addTabItem(tabMore)
+//                .addTabItem(tabMore)
 //                .setMode(TabLayoutMode.HIDE_TEXT)
 //                .setMode(TabLayoutMode.CHANGE_BACKGROUND_COLOR)
                 .setMode(TabLayoutMode.HIDE_TEXT| TabLayoutMode.CHANGE_BACKGROUND_COLOR)
                 .build();
 
-        controller.setMessageNumber("News",2);
+//        controller.setMessageNumber("News",99);
+        CarpeDiemController.getInstance().controller.setMessageNumber("Events", CarpeDiemController.getInstance().getEventNum());
+        CarpeDiemController.getInstance().controller.setMessageNumber("Backpack", CarpeDiemController.getInstance().getItemNum());
 //        controller.setDisplayOval(0,true);
 
-        controller.addTabItemClickListener(listener);
+        CarpeDiemController.getInstance().controller.addTabItemClickListener(listener);
     }
     OnTabItemSelectListener listener = new OnTabItemSelectListener() {
         @Override
@@ -157,16 +157,34 @@ public class NewMainActivity extends AppCompatActivity {
             switch (index){
                 case 0:
                     toolbar.setTitle("               (`へ´≠)");
+                    CarpeDiemController.getInstance().controller.setMessageNumber("Events", 0);
+                    toolbarTitle.setText(
+                            "　　　＿＿＿_ ∧∧　　\n" +
+                            "　～'　＿＿__(,,ﾟДﾟ)\n" +
+                            "　　 ＵU 　 　Ｕ U　");
                     break;
                 case 1:
                     toolbar.setTitle("(ﾒﾟДﾟ)ﾒ");
+                    CarpeDiemController.getInstance().controller.setMessageNumber("Backpack", 0);
+                    toolbarTitle.setText(
+                            "　　　＿＿＿＿＿＿_ ∧∧　　\n" +
+                            "　～'　＿＿＿＿＿__(,,ﾟДﾟ)\n" +
+                            "　　 ＵU 　　　　 　Ｕ U　");
                     break;
                 case 2:
                     toolbar.setTitle("(ﾒﾟДﾟ)ﾒ        (`へ´≠)");
-                    controller.setMessageNumber("News",0);
+                    CarpeDiemController.getInstance().controller.setMessageNumber("News",0);
+                    toolbarTitle.setText(
+                            "　　　＿＿＿＿＿＿＿＿＿＿＿_ ∧∧　　\n" +
+                            "　～'　＿＿＿＿＿＿＿＿＿＿__(,,ﾟДﾟ)\n" +
+                            "　　 ＵU 　　　　　　　　　 　Ｕ U　");
                     break;
                 case 3:
                     toolbar.setTitle("(◓Д◒)✄╰⋃╯     ٩(ŏ﹏ŏ、)۶");
+                    toolbarTitle.setText(
+                            "　　　＿＿＿＿＿＿＿＿＿＿＿＿_ ∧∧　　\n" +
+                            "　～'　＿＿＿＿＿＿＿＿＿＿＿__(,,ﾟДﾟ)\n" +
+                            "　　 ＵU 　　　　　　　　　　 　Ｕ U　");
                     break;
             }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
