@@ -29,7 +29,7 @@ public interface CarpeDiemApi {
 //    @GET("testing/{name}")
 //    Call<CarpeDiemObject>getToken(@Path("jsonTest.php")String name);
 
-    String ENDPOINT = "https://ccmacd.ddns.net/";
+    String ENDPOINT = "http://ccmacd.ddns.net/";
 
     @FormUrlEncoded
     @POST("user/create")
@@ -54,6 +54,10 @@ public interface CarpeDiemApi {
     @Headers({"Accept: application/json"})
     @GET("/event")
     Observable<EventLists>getNewEventList(@Query(value = "access_token", encoded = true) String  token);
+
+    @Headers({"Accept: application/json"})
+    @GET("/event")
+    Observable<EventLists>getNewEventListWithLoc(@Query(value = "access_token", encoded = true) String  token, @Query(value = "lng", encoded = true)String lng, @Query(value = "lat", encoded = true)String lat);
 
     @FormUrlEncoded
     @Headers({"Accept: application/json"})
