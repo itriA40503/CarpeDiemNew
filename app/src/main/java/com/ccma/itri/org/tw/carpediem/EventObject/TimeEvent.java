@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.ccma.itri.org.tw.carpediem.CarpeDiemController;
 import com.ccma.itri.org.tw.carpediem.MainActivity;
+import com.ccma.itri.org.tw.carpediem.NewMainActivity;
 import com.ccma.itri.org.tw.carpediem.R;
 import com.ccma.itri.org.tw.carpediem.Timer.CountDownTimerWithPause;
 
@@ -17,23 +18,24 @@ public class TimeEvent {
     private static final String TAG = "TimeEvent";
     public static final int START=0, RUNNING=1, END=2;
     public int mStatus = START;
-    public String mEventName, mReward;
+    public String mEventName, mDescripition, mEventDate, mReward;
     public String mId;
     public long mTotalTime;
     public int mLogo, mType;
     public int mPrgressBarColor;
     public boolean mContinuous;
     public CountDownTimerWithPause mTimer;
+    public RewardItem mRewardItem;
 
-
-
-    public TimeEvent (String id, String eventName, long totalTime, boolean continuous){
+    public TimeEvent (String id, String eventName,String eventDate, String descripition, long totalTime, boolean continuous){
         Log.d(TAG,"Create "+eventName);
         mId = id;
         mEventName = eventName;
         mTotalTime = totalTime;
         mLogo = setLogoByName(mEventName);
         mContinuous = continuous;
+        mDescripition = descripition;
+        mEventDate = eventDate;
 //        if(continuous){
 //            mPrgressBarColor = R.color.bluegreen;
 //        }else {
@@ -41,6 +43,30 @@ public class TimeEvent {
 //        }
         createTimer();
     }
+
+    public TimeEvent (String id, String eventName,String eventDate, String descripition, long totalTime, boolean continuous, RewardItem rewardItem){
+        Log.d(TAG,"Create "+eventName);
+        mId = id;
+        mEventName = eventName;
+        mTotalTime = totalTime;
+        mLogo = setLogoByName(mEventName);
+        mContinuous = continuous;
+        mDescripition = descripition;
+        mEventDate = eventDate;
+        mRewardItem = rewardItem;
+
+        createTimer();
+    }
+
+    public void setRewardItem(RewardItem rewardItem){
+        mRewardItem = rewardItem;
+    }
+
+    public RewardItem getRewardItem(){return  mRewardItem;}
+
+    public String getEventDate(){return mEventDate;}
+
+    public String getDescripition(){return mDescripition;}
 
     private void createTimer(){
         mStatus = START;
@@ -74,7 +100,7 @@ public class TimeEvent {
                 Logo = 1;
                 break;
         }
-        Log.d("setLogoByName",name+":"+String.valueOf(Logo));
+//        Log.d("setLogoByName",name+":"+String.valueOf(Logo));
         return Logo;
     }
 
@@ -101,10 +127,10 @@ public class TimeEvent {
                     .load()
                     .ticker(mEventName)
                     .message("Event Finished !")
-                    .smallIcon(R.drawable.carpediem_icon)
+                    .smallIcon(R.drawable.install_icon)
                     .largeIcon(mLogo)
                     .flags(Notification.DEFAULT_ALL)
-                    .click(MainActivity.class)
+                    .click(NewMainActivity.class)
                     .simple()
                     .build();
         }
