@@ -14,12 +14,13 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- TO get Camera -->
     <uses-permission android:name="android.permission.CAMERA" />
-
-
+    <!-- To get Location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
         android:name=".CarpeDiemController"
         android:allowBackup="true"
-        android:icon="@drawable/carpediem_icon"
+        android:icon="@drawable/install_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:screenOrientation="portrait"
@@ -36,7 +37,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"></activity>
-        <activity android:name=".NewMainActivity">
+        <activity android:name=".NewMainActivity"
+            android:screenOrientation="portrait">
 
         </activity>
         <activity android:name=".Scanner.ScanActivity"

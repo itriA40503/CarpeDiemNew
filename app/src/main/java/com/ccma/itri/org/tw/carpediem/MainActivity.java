@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
             if(mFragmentStack.size() > 1){
                 mFragmentStack.remove(mFragmentStack.size() -1);
             }
-
         }
         fragmentTrans.replace(R.id.fragment, fragment);
 //        fragmentTrans.add(R.id.frameLayout, fragment, "Second");

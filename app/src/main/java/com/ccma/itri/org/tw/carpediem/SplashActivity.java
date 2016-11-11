@@ -21,6 +21,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ccma.itri.org.tw.carpediem.UserData.UserData;
+
 
 public class SplashActivity extends AppCompatActivity {
     public static final int REQUEST_PERMISSION_PHONE_STATE = 0;
@@ -50,9 +52,13 @@ public class SplashActivity extends AppCompatActivity {
 //        if(UserData.getInstance().getUserToken().equals("No Value")){
 //            CarpeDiemController.getInstance().RxGetTokenCreate(uuid);
 //        }
+        //# TRY DUMMY
+//        CarpeDiemController.getInstance().settingDummy();
+//        CarpeDiemController.getInstance().OpenMainPage(SplashActivity.this);
 
         //# openMainPage After Check Permission
          showPhoneStatePermission();
+
 //        openMainPage();
 
     }
