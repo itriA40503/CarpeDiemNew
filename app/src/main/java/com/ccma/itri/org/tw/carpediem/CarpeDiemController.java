@@ -32,6 +32,8 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,6 +42,8 @@ import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static android.R.id.list;
 
 /**
  * Created by A40503 on 2016/9/20.
@@ -52,7 +56,7 @@ public class CarpeDiemController extends Application {
     public List<BackpackItem> Items;
     private LocationManager lms;
     private Location location;
-    private int eventNum, itemNum;
+    public int eventNum, itemNum;
     public Controller controller;
     @Override
     public void onCreate() {
@@ -323,8 +327,8 @@ public class CarpeDiemController extends Application {
 
     public void RxGetNewEventList(final String token, final Activity activity) {
         showToast("Get EventList");
-        String lng = String.valueOf(location.getLongitude());
-        String lat = String.valueOf(location.getLatitude());
+        final String lng = String.valueOf(location.getLongitude());
+        final String lat = String.valueOf(location.getLatitude());
 //        ApiController.getInstance().getNewEventListWithLoc(token, lng , lat)
         ApiController.getInstance().getNewEventListWithLoc(token, "121.044747" , "24.773955") //# poster
 //        ApiController.getInstance().getNewEventListWithLoc(token, "121.0450396" , "24.774296") //# mos
@@ -339,14 +343,27 @@ public class CarpeDiemController extends Application {
 
                     @Override
                     public void onError(Throwable e) {
-                        String errorBody = null;
-                        try {
-                            errorBody = ((HttpException) e).response().errorBody().string();
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
+                        CarpeDiemEventObject ObjectFromGson;
+                        if (e instanceof HttpException) {
+                            // We had non-2XX http error
+                            Log.d("RxGetNewEventList","HttpException");
+
+                            String errorBody = null;
+                            try {
+                                errorBody = ((HttpException) e).response().errorBody().string();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                            Gson gson = new Gson();
+                            ObjectFromGson = gson.fromJson(errorBody,CarpeDiemEventObject.class);
                         }
-                        Gson gson = new Gson();
-                        CarpeDiemEventObject ObjectFromGson = gson.fromJson(errorBody,CarpeDiemEventObject.class);
+                        if (e instanceof IOException) {
+                            Log.d("RxGetNewEventList","IOException");
+                            Log.d("RxGetNewEventList",e.toString());
+//                            Log.d("startEvent","OK");
+                            // A network or conversion error happened
+                        }
+
 //                        Log.d("RxGetEventList","CODE : "+ObjectFromGson.getCode());
                         Log.d("RxGetEventList","onERROR ");
                         ObjectFromGson = null;
@@ -357,6 +374,8 @@ public class CarpeDiemController extends Application {
                         Log.d("RxGetEventList","SIZE : "+Integer.toString(carpeDiemListEventObject.userEventList.size()));
                         eventNum = carpeDiemListEventObject.userEventList.size();
 //                        itemNum = carpeDiemListEventObject.eventList.size();
+                        Events.clear();
+                        Events.add(new TimeEvent("00","GPS","2016","location:"+String.valueOf(lng+":"+lat), Long.parseLong(60*1000+""), true));
                         Events.add(new TimeEvent("0","userEventList","2016", "Size:"+String.valueOf(eventNum), Long.parseLong(60*1000+""), true));
                         Log.d("RxGetEventList","");
 
@@ -385,22 +404,21 @@ public class CarpeDiemController extends Application {
                             Events.add(new TimeEvent(id, eventName, time, event.getDescription() ,5*1000, false, rewardItem));
 //                            Events.add(new TimeEvent(event.getId(), event.getId(), event.getCompletedTimes()*1000, true));
                         }
-//                        Events.add(new TimeEvent("Eeny",5000,true));
-//                        Events.add(new TimeEvent("meeny",6000,true));
-//                        Events.add(new TimeEvent("miny",5000,false));
-//                        Events.add(new TimeEvent("moe",5000,false));
                     }
                 });
     }
 
     public void RxGetItemList(String token){
+        final int tmp = getItemNum();
         ApiController.getInstance().mAPI.getItemList(token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ArrayUserItemList>() {
                     @Override
                     public void onCompleted() {
-
+                        if((controller!=null) && (tmp < itemNum)){
+                            controller.setMessageNumber("Backpack", getItemNum());
+                        }
                     }
 
                     @Override
@@ -524,6 +542,25 @@ public class CarpeDiemController extends Application {
                 });
     }
 
+    public List<BackpackItem> SorttingItem(){
+        Collections.sort(Items,
+                new Comparator<BackpackItem>() {
+                    public int compare(BackpackItem o1, BackpackItem o2) {
+                        return o1.getDayLeft().compareTo(o2.getDayLeft());
+                    }
+                });
+        return Items;
+    }
+
+    public void settingDummy(){
+        RewardItem rewardItem;
+        rewardItem =new RewardItem("666", "1", "poke", "pika");
+        Events.add(new TimeEvent("1", "eventName", "2016/11/11 11:00", "poky!" ,5*1000, false, rewardItem));
+        Events.add(new TimeEvent("2", "eventName2", "3016/11/11 11:00", "pokypo!" ,5*1000, false, rewardItem));
+        Items.add(new BackpackItem("666","pika", "2016/10/10 11:00", "2017/10/10 11:00"));
+        Items.add(new BackpackItem("666","pika", "2016/10/10 11:00", "2016/12/30 11:00"));
+    }
+
     public void locationServiceInitial() {
         try{
             lms = (LocationManager) getSystemService(LOCATION_SERVICE); //#取得系統定位服務
@@ -565,7 +602,7 @@ public class CarpeDiemController extends Application {
             Double longitude = location.getLongitude();   //取得經度
             Double latitude = location.getLatitude();     //取得緯度
             Log.d("getLocation", longitude+":"+latitude);
-            Events.add(new TimeEvent("00","GPS","2016","location:"+String.valueOf(longitude+":"+latitude), Long.parseLong(60*1000+""), true));
+//            Events.add(new TimeEvent("00","GPS","2016","location:"+String.valueOf(longitude+":"+latitude), Long.parseLong(60*1000+""), true));
         }
         else {
             Log.d("getLocation", "NULL");
