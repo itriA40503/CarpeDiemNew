@@ -20,6 +20,11 @@
             android:layout_height="45dp"
             android:id="@+id/img_reward_type"
             android:src="@drawable/type_icon_birthday"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_reward_name"
+            android:layout_gravity="center"/>
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
