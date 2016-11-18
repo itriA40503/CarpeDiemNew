@@ -45,7 +45,7 @@ public class SplashActivity extends AppCompatActivity {
             getService = true; //#確認開啟定位服務
             startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)); //#開啟設定頁面
         }
-//        UserData.getInstance().clearUserData();
+        UserData.getInstance().clearUserData();
         //# get UUID
         uuid = CarpeDiemController.getInstance().getUUID();
 //        CarpeDiemController.getInstance().RxGetTokenCreate(uuid,this);
