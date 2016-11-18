@@ -9,14 +9,14 @@ import java.util.TimeZone;
  */
 public class CarpeDiemEventObject {
 //    String id;
-    String eventId;
-    public String name;
-    public String description;
-    String beaconId;
-    String createdAt;
-    String advertiserId;
-    String timeRequire;
-    public item item;
+    private String eventId;
+    private String name;
+    private String description;
+    private String beaconId;
+    private String createdAt;
+    private String advertiserId;
+    private String timeRequire;
+    private item item;
 
     public String getCreatedAt(){
 //        long unixSeconds = Long.parseLong(createdAt);
@@ -29,9 +29,11 @@ public class CarpeDiemEventObject {
         return formattedDate;
     }
 
-    public String getEventDesc(){
-        return description;
-    }
+    public String getAdvertiserId(){return advertiserId;}
+
+    public String getBeaconId(){return beaconId;}
+
+    public item getItem() {return item;}
 
     public String getEventId(){
         return eventId;
@@ -48,10 +50,13 @@ public class CarpeDiemEventObject {
         String typeId;
         String name;
         String description;
+        String advertiserId;
 
         public String getItemContent(){
             return itemId+":"+typeId+":"+description;
         }
+
+        public String getAdvertiserId(){return advertiserId;}
 
         public String getTypeId(){return  typeId;}
 
