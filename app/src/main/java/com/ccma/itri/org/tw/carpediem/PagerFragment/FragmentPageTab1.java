@@ -28,6 +28,7 @@ public class FragmentPageTab1 extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.pager_one, container, false);
         imageView = (ImageView)view.findViewById(R.id.img_tab1);
+        imageView.setClickable(true);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
