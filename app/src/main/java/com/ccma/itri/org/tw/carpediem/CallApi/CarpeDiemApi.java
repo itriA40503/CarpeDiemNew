@@ -57,6 +57,10 @@ public interface CarpeDiemApi {
 
     @Headers({"Accept: application/json"})
     @GET("/event")
+    Observable<EventLists>getNewEventListWithBeaconId(@Query(value = "access_token", encoded = true) String  token, @Query(value = "beacon_id", encoded = true)String beaconId);
+
+    @Headers({"Accept: application/json"})
+    @GET("/event")
     Observable<EventLists>getNewEventListWithLoc(@Query(value = "access_token", encoded = true) String  token, @Query(value = "lng", encoded = true)String lng, @Query(value = "lat", encoded = true)String lat);
 
     @FormUrlEncoded
