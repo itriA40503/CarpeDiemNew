@@ -7,6 +7,8 @@ import java.util.ArrayList;
  */
 
 public class EventLists {
-    public ArrayList<CarpeDiemEventObject>eventList;
-    public ArrayList<UserEventList>userEventList;
+//    public ArrayList<CarpeDiemEventObject>eventList;
+//    public ArrayList<UserEventList>userEventList;
+
+    public ArrayList<NewUserEventList> userEventList;
 }
