@@ -8,8 +8,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +25,7 @@ import com.ccma.itri.org.tw.carpediem.PagerFragment.FragmentPageTab1;
 import com.ccma.itri.org.tw.carpediem.PagerFragment.FragmentPageTab2;
 
 import com.ccma.itri.org.tw.carpediem.Scanner.ScanActivity;
+import com.ccma.itri.org.tw.carpediem.Scanner.ScanFragment;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import java.util.ArrayList;
@@ -43,11 +47,13 @@ public class NewMainActivity extends AppCompatActivity {
 //    private Controller controller;
     private Toolbar toolbar;
     private TextView toolbarTitle;
+    private PagerBottomTabLayout pagerBottomTabLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_activity_main);
+//        setupWindowAnimations();
 //        CarpeDiemController.getInstance().Events.add(new TimeEvent("1","FisrtEvent", 5000, false));
 //        CarpeDiemController.getInstance().Events.add(new TimeEvent("1","SecondEvent", 10000, false));
 //        CarpeDiemController.getInstance().Events.add(new TimeEvent("1","ContinuousEvent", 10000, true));
@@ -59,6 +65,7 @@ public class NewMainActivity extends AppCompatActivity {
         mFragments.add(new BackpackFragment());
         mFragments.add(new FragmentPageTab1());
         mFragments.add(new FragmentPageTab2());
+        mFragments.add(new ScanFragment());
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         // transaction.setCustomAnimations(R.anim.push_up_in,R.anim.push_up_out);
         transaction.add(R.id.contentContainer,mFragments.get(0));
@@ -67,14 +74,24 @@ public class NewMainActivity extends AppCompatActivity {
         settingToolbar();
 
     }
-    private void showDialog(){
 
-    }
+//    private void setupWindowAnimations() {
+//        Fade fade = new Fade();
+//        fade.setDuration(1000);
+//        getWindow().setEnterTransition(fade);
+//
+//        Slide slide = new Slide();
+//        slide.setDuration(1000);
+//        getWindow().setReturnTransition(slide);
+//    }
+
     private void settingToolbar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbarTitle = (TextView)findViewById(R.id.toolbar_title);
 //        toolbar.setLogo(R.drawable.carpediem_logo);
-        toolbar.setTitle("(σﾟ∀ﾟ)σ CarpeDiem ヽ( ° ▽°)ノ");
+//        toolbar.setTitle("(σﾟ∀ﾟ)σ CarpeDiem ヽ( ° ▽°)ノ");
+        toolbar.setTitle("");
+//        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
 
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
@@ -85,6 +102,19 @@ public class NewMainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_toolbar, menu);
         return true;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                ActionBar ab = getSupportActionBar();
+                pagerBottomTabLayout.setVisibility(View.VISIBLE);
+                ab.setDisplayHomeAsUpEnabled(false);
+                switchFragments(0);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private Toolbar.OnMenuItemClickListener onMenuItemClickListener = new Toolbar.OnMenuItemClickListener(){
         @Override
@@ -92,9 +122,14 @@ public class NewMainActivity extends AppCompatActivity {
             switch (item.getItemId()){
                 case R.id.scan:
                     CarpeDiemController.getInstance().showToast("SCAN");
-                    showDialog();
                     Intent intent = new Intent(NewMainActivity.this, ScanActivity.class);
                     startActivity(intent);
+
+                    //transaction.setCustomAnimations(R.anim.push_up_in,R.anim.push_up_out);
+//                    ActionBar ab = getSupportActionBar();
+//                    pagerBottomTabLayout.setVisibility(View.GONE);
+//                    ab.setDisplayHomeAsUpEnabled(true);
+//                    switchFragments(4);
                     break;
             }
             return false;
@@ -102,7 +137,7 @@ public class NewMainActivity extends AppCompatActivity {
     };
 
     private void BottomTabTest(){
-        PagerBottomTabLayout pagerBottomTabLayout = (PagerBottomTabLayout) findViewById(R.id.bottomBar);
+        pagerBottomTabLayout = (PagerBottomTabLayout) findViewById(R.id.bottomBar);
 
         //# create bottom tab - events
         TabItemBuilder tabEvents = new TabItemBuilder(this).create()
@@ -154,43 +189,7 @@ public class NewMainActivity extends AppCompatActivity {
         @Override
         public void onSelected(int index, Object tag){
             Log.i("Tab","onSelected:"+index+"   TAG: "+tag.toString());
-            switch (index){
-                case 0:
-                    toolbar.setTitle("               (`へ´≠)");
-                    CarpeDiemController.getInstance().controller.setMessageNumber("Events", 0);
-                    toolbarTitle.setText(
-                            "　　　＿＿＿_ ∧∧　　\n" +
-                            "　～'　＿＿__(,,ﾟДﾟ)\n" +
-                            "　　 ＵU 　 　Ｕ U　");
-                    break;
-                case 1:
-                    toolbar.setTitle("(ﾒﾟДﾟ)ﾒ");
-                    CarpeDiemController.getInstance().controller.setMessageNumber("Backpack", 0);
-                    toolbarTitle.setText(
-                            "　　　＿＿＿＿＿＿_ ∧∧　　\n" +
-                            "　～'　＿＿＿＿＿__(,,ﾟДﾟ)\n" +
-                            "　　 ＵU 　　　　 　Ｕ U　");
-                    break;
-                case 2:
-                    toolbar.setTitle("(ﾒﾟДﾟ)ﾒ        (`へ´≠)");
-                    CarpeDiemController.getInstance().controller.setMessageNumber("News",0);
-                    toolbarTitle.setText(
-                            "　　　＿＿＿＿＿＿＿＿＿＿＿_ ∧∧　　\n" +
-                            "　～'　＿＿＿＿＿＿＿＿＿＿__(,,ﾟДﾟ)\n" +
-                            "　　 ＵU 　　　　　　　　　 　Ｕ U　");
-                    break;
-                case 3:
-                    toolbar.setTitle("(◓Д◒)✄╰⋃╯     ٩(ŏ﹏ŏ、)۶");
-                    toolbarTitle.setText(
-                            "　　　＿＿＿＿＿＿＿＿＿＿＿＿_ ∧∧　　\n" +
-                            "　～'　＿＿＿＿＿＿＿＿＿＿＿__(,,ﾟДﾟ)\n" +
-                            "　　 ＵU 　　　　　　　　　　 　Ｕ U　");
-                    break;
-            }
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            //transaction.setCustomAnimations(R.anim.push_up_in,R.anim.push_up_out);
-            transaction.replace(R.id.contentContainer,mFragments.get(index));
-            transaction.commit();
+            switchFragments(index);
         }
 
         @Override
@@ -198,6 +197,59 @@ public class NewMainActivity extends AppCompatActivity {
             Log.i("asd","onRepeatClick:"+index+"   TAG: "+tag.toString());
         }
     };
+
+    private void switchFragments(int index){
+        switch (index){
+            case 0:
+//                toolbar.setTitle("               (`へ´≠)");
+                toolbarTitle.setText("CarpeDiem");
+                CarpeDiemController.getInstance().controller.setMessageNumber("Events", 0);
+//                toolbarTitle.setText(
+//                        "　　　＿＿＿_ ∧∧　　\n" +
+//                                "　～'　＿＿__(,,ﾟДﾟ)\n" +
+//                                "　　 ＵU 　 　Ｕ U　");
+                break;
+            case 1:
+//                toolbar.setTitle("(ﾒﾟДﾟ)ﾒ");
+                toolbarTitle.setText("Backpack");
+                CarpeDiemController.getInstance().controller.setMessageNumber("Backpack", 0);
+//                toolbarTitle.setText(
+//                        "　　　＿＿＿＿＿＿_ ∧∧　　\n" +
+//                                "　～'　＿＿＿＿＿__(,,ﾟДﾟ)\n" +
+//                                "　　 ＵU 　　　　 　Ｕ U　");
+                break;
+            case 2:
+//                toolbar.setTitle("(ﾒﾟДﾟ)ﾒ        (`へ´≠)");
+                toolbarTitle.setText("News");
+                CarpeDiemController.getInstance().controller.setMessageNumber("News",0);
+//                toolbarTitle.setText(
+//                        "　　　＿＿＿＿＿＿＿＿＿＿＿_ ∧∧　　\n" +
+//                                "　～'　＿＿＿＿＿＿＿＿＿＿__(,,ﾟДﾟ)\n" +
+//                                "　　 ＵU 　　　　　　　　　 　Ｕ U　");
+                break;
+            case 3:
+                toolbar.setTitle("(◓Д◒)✄╰⋃╯     ٩(ŏ﹏ŏ、)۶");
+
+//                toolbarTitle.setText(
+//                        "　　　＿＿＿＿＿＿＿＿＿＿＿＿_ ∧∧　　\n" +
+//                                "　～'　＿＿＿＿＿＿＿＿＿＿＿__(,,ﾟДﾟ)\n" +
+//                                "　　 ＵU 　　　　　　　　　　 　Ｕ U　");
+                break;
+            case 4:
+                ActionBar ab = getSupportActionBar();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.contentContainer,mFragments.get(3));
+                transaction.commit();
+                pagerBottomTabLayout.setVisibility(View.GONE);
+                ab.setDisplayHomeAsUpEnabled(true);
+                toolbarTitle.setText("(σﾟ∀ﾟ)σ CarpeDiem ヽ( ° ▽°)ノ\n"+
+                                     "        C~A~M~R~A~");
+        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        //transaction.setCustomAnimations(R.anim.push_up_in,R.anim.push_up_out);
+        transaction.replace(R.id.contentContainer,mFragments.get(index));
+        transaction.commit();
+    }
 
     private void bottomBarOrg(){
         BottomBar bottomBar = (BottomBar) findViewById(R.id.bottomBar);
