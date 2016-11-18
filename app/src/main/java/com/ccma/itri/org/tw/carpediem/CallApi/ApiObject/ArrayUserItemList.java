@@ -7,5 +7,6 @@ import java.util.ArrayList;
  */
 
 public class ArrayUserItemList {
-    public ArrayList<UserItemList> userItemList;
+//    public ArrayList<UserItemList> userItemList;
+    public ArrayList<NewUserItemList> userItemList;
 }
