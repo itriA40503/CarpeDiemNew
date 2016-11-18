@@ -1,6 +1,7 @@
 package com.ccma.itri.org.tw.carpediem.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,8 +16,11 @@ import com.ccma.itri.org.tw.carpediem.CarpeDiemController;
 import com.ccma.itri.org.tw.carpediem.Dialog.BackpackDialog;
 import com.ccma.itri.org.tw.carpediem.EventObject.BackpackItem;
 import com.ccma.itri.org.tw.carpediem.R;
+import com.ccma.itri.org.tw.carpediem.Timer.CountDownTimerWithPause;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,16 +33,19 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
     private String[] mTitles;
     private List<BackpackItem> backpackItemList;
 
+
     public static class myViewHolder extends RecyclerView.ViewHolder {
         LinearLayout ll_main, ll_reward;
         ImageButton imageButton;
-        TextView title, content, deadline, dayleft;
+        TextView title, deadline, dayleft, dayleft2;
         ImageView type, logo;
+        CountDownTimerWithPause mTimer;
 
         myViewHolder(View view) {
             super(view);
             title = (TextView)view.findViewById(R.id.txt_title_backppack2);
             dayleft = (TextView)view.findViewById(R.id.txt_reward_dayleft_backpack2);
+            dayleft2 = (TextView)view.findViewById(R.id.txt_reward_dayleft2_backpack2);
             deadline = (TextView)view.findViewById(R.id.txt_deadline_backpack2);
             type = (ImageView)view.findViewById(R.id.img_type_backppack2);
             logo = (ImageView)view.findViewById(R.id.img_logo_backppack2);
@@ -89,11 +96,48 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(myViewHolder holder, final int position) {
+    public void onBindViewHolder(final myViewHolder holder, final int position) {
         final BackpackItem item = CarpeDiemController.getInstance().Items.get(position);
         int nums = (int)(Math.random()*9);
         Picasso.with(mContext).load(getNumImage(nums)).into(holder.logo);
-        holder.dayleft.setText(item.getDayLeft());
+//        if(item.getUserItemList().getItem().getImage().getUrl()!=null){
+//            Log.d("onBindViewHolder","URL img");
+//            Picasso.with(mContext).load(item.getUserItemList().getItem().getImage().getUrl()).into(holder.logo);
+//        }else {
+//            Log.d("onBindViewHolder","NOT URL img");
+//            Picasso.with(mContext).load(getNumImage(nums)).into(holder.logo);
+//        }
+        int leftday = item.getDayLeft();
+        Log.d("onBindViewHolder",position+":"+leftday);
+        if(leftday == 0 && leftday < 1){
+
+            holder.dayleft.setText("TODAY LIMIT !");
+            holder.dayleft.setTextSize(18);
+            holder.dayleft2.setVisibility(View.GONE);
+//            if(holder.mTimer == null){
+//                holder.mTimer = new CountDownTimerWithPause(item.getleftTimes(),1000) {
+//                    @Override
+//                    public void onTick(long millisUntilFinished) {
+//                        holder.dayleft.setText(dateFormat(millisUntilFinished));
+//                    }
+//
+//                    @Override
+//                    public void onFinish() {
+//
+//                    }
+//                }.create();
+//                holder.mTimer.resume();
+//            }
+            holder.dayleft.setTextColor(Color.RED);
+
+//            holder.dayleft.setText(item.getTimer().timeLeft()+"");
+        }else {
+            holder.dayleft.setText(String.valueOf(item.getDayLeft()));
+            holder.dayleft2.setVisibility(View.VISIBLE);
+            holder.dayleft.setTextSize(20);
+            holder.dayleft.setTextColor(mContext.getResources().getColor(R.color.bluelight));
+        }
+
         holder.deadline.setText(item.getExpiredAt());
 //        holder.type.setImageResource(getTypeImage(types));
 //        holder.logo.setImageResource(getNumImage(nums));
@@ -159,6 +203,12 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
         return backpackItemList.size();
     }
 
+    private String dateFormat(long date){
 
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+        Date format = new Date(date);
+        Log.d("getleftTimes",format+"   "+date+"    "+sdf.format(format));
+        return sdf.format(format);
+    }
 
 }
