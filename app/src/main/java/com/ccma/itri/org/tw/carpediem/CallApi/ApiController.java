@@ -73,4 +73,8 @@ public class ApiController {
         return mAPI.getNewEventListWithLoc(token, lng, lat);
     }
 
+    public Observable<EventLists>getNewEventListWithBeaconId(String token, String beaconId){
+        return mAPI.getNewEventListWithBeaconId(token, beaconId);
+    }
+
 }
