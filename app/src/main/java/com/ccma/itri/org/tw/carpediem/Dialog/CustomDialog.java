@@ -6,7 +6,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.ccma.itri.org.tw.carpediem.R;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.flyco.animation.Attention.Swing;
+import com.flyco.animation.FadeEnter.FadeEnter;
 import com.flyco.animation.Jelly;
 import com.flyco.animation.NewsPaperEnter;
 import com.flyco.dialog.utils.CornerUtils;
@@ -31,11 +34,16 @@ public class CustomDialog extends BaseDialog<CustomDialog> {
         showAnim(new NewsPaperEnter());
         View inflate = View.inflate(mContext, R.layout.dialog_test, null);
 
-        inflate.setBackgroundDrawable(
-                CornerUtils.cornerDrawable(Color.parseColor("#ffffff"), dp2px(5)));
+        inflate.setBackgroundDrawable(CornerUtils.cornerDrawable(Color.parseColor("#ffffff"), dp2px(5)));
 
         imageView = (ImageView)inflate.findViewById(R.id.img_dialog);
         imageView.setImageResource(mImage);
+
+//        YoYo.with(Techniques.Flash)
+//            .duration(1500)
+//            .playOn(imageView);
+
+
 
         return inflate;
     }
