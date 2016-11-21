@@ -2,7 +2,6 @@ package com.ccma.itri.org.tw.carpediem;
 
 import android.app.Activity;
 import android.app.Application;
-import android.app.usage.UsageEvents;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,14 +18,16 @@ import com.ccma.itri.org.tw.carpediem.CallApi.ApiController;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.ArrayUserItemList;
 
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.EventLists;
-import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.UserEventList;
-import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.UserItemList;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.Item;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.NewUserEventList;
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.NewUserItemList;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemEventObject;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemListEventObject;
 import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.CarpeDiemObject;
 import com.ccma.itri.org.tw.carpediem.EventObject.BackpackItem;
 import com.ccma.itri.org.tw.carpediem.EventObject.RewardItem;
 import com.ccma.itri.org.tw.carpediem.EventObject.TimeEvent;
+import com.ccma.itri.org.tw.carpediem.SorttingList.SorttingComarator;
 import com.ccma.itri.org.tw.carpediem.UserData.UserData;
 import com.google.gson.Gson;
 
@@ -43,8 +44,6 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static android.R.id.list;
-
 /**
  * Created by A40503 on 2016/9/20.
  */
@@ -58,6 +57,7 @@ public class CarpeDiemController extends Application {
     private Location location;
     public int eventNum, itemNum;
     public Controller controller;
+//    public String storeName = null;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -365,45 +365,58 @@ public class CarpeDiemController extends Application {
                         }
 
 //                        Log.d("RxGetEventList","CODE : "+ObjectFromGson.getCode());
-                        Log.d("RxGetEventList","onERROR ");
+                        Log.d("RxGetNewEventList","onERROR ");
+                        Log.d("RxGetNewEventList",e.toString());
                         ObjectFromGson = null;
                     }
 
                     @Override
                     public void onNext(EventLists carpeDiemListEventObject) {
-                        Log.d("RxGetEventList","SIZE : "+Integer.toString(carpeDiemListEventObject.userEventList.size()));
+                        Log.d("RxGetNewEventList","SIZE : "+Integer.toString(carpeDiemListEventObject.userEventList.size()));
                         eventNum = carpeDiemListEventObject.userEventList.size();
 //                        itemNum = carpeDiemListEventObject.eventList.size();
                         Events.clear();
-                        Events.add(new TimeEvent("00","GPS","2016","location:"+String.valueOf(lng+":"+lat), Long.parseLong(60*1000+""), true));
-                        Events.add(new TimeEvent("0","userEventList","2016", "Size:"+String.valueOf(eventNum), Long.parseLong(60*1000+""), true));
-                        Log.d("RxGetEventList","");
+                        RewardItem tempItem;
+                        tempItem =new RewardItem("666", "1", "poke", "pika", "00");
+                        Events.add(new TimeEvent("00","GPS","2016","location:"+String.valueOf(lng+":"+lat), Long.parseLong(60*1000+""), true, tempItem));
+                        Events.add(new TimeEvent("0","userEventList","2016", "Size:"+String.valueOf(eventNum), Long.parseLong(60*1000+""), true, tempItem));
+                        Log.d("RxGetNewEventList","");
 
-                        ArrayList<UserEventList> userEventLists = new ArrayList<UserEventList>(); //# for mapping
+//                        ArrayList<UserEventList> userEventLists = new ArrayList<UserEventList>(); //# for mapping
 
-                        for(UserEventList event : carpeDiemListEventObject.userEventList){
-//                            Log.d("RxGetEventList",event.getItemContents());
-                            userEventLists.add(new UserEventList(event.getId(), event.getEventId()));
-                        }
-
-                        for(CarpeDiemEventObject event : carpeDiemListEventObject.eventList){
-                            String eventName = event.getName();
-                            CarpeDiemEventObject.item item = event.item;
-                            String time = event.getCreatedAt();
-                            String id = null;
-
+                        for (NewUserEventList eventList : carpeDiemListEventObject.userEventList){
+                            NewUserEventList.Event event = eventList.getEvent();
+                            Item item = event.getItem();
                             RewardItem rewardItem;
-                            rewardItem =new RewardItem(item.getItemId(), item.getTypeId(), item.getName(), item.getItemDesc());
-                            Log.d("rewardItem",item.getItemId()+","+item.getTypeId()+","+item.getName()+","+item.getItemDesc());
-                            for(UserEventList _event : userEventLists){
-                                if(event.getEventId().equals(_event.getEventId())){
-                                    id = _event.getId();
-                                }
-                            }
-//                            Events.add(new TimeEvent(id, id+":"+eventName, time, event.getDescription() ,Long.parseLong(event.getTimeRequire())*250, false, rewardItem));
-                            Events.add(new TimeEvent(id, eventName, time, event.getDescription() ,5*1000, false, rewardItem));
-//                            Events.add(new TimeEvent(event.getId(), event.getId(), event.getCompletedTimes()*1000, true));
+                            rewardItem =new RewardItem(item.getId(), item.getTypeId(), item.getName(), item.getDescription(), item.getAdvertiser());
+//                            Events.add(new TimeEvent(eventList.getId(), event.getName(), event.getCreatedAt(), event.getDescription() ,5*1000, false, rewardItem));
+                            Events.add(new TimeEvent(eventList , false, rewardItem));
                         }
+
+//                        for(UserEventList event : carpeDiemListEventObject.userEventList){
+////                            Log.d("RxGetEventList",event.getItemContents());
+//                            userEventLists.add(new UserEventList(event.getId(), event.getEventId()));
+//                        }
+
+//                        for(CarpeDiemEventObject event : carpeDiemListEventObject.eventList){
+//                            String eventName = event.getName();
+//                            CarpeDiemEventObject.item item = event.getItem();
+//                            String time = event.getCreatedAt();
+//                            String id = null;
+//
+//                            RewardItem rewardItem;
+//                            rewardItem =new RewardItem(item.getItemId(), item.getTypeId(), item.getName(), item.getItemDesc(), item.getAdvertiserId());
+//                            Log.d("rewardItem",item.getItemId()+","+item.getTypeId()+","+item.getName()+","+item.getItemDesc()+","+item.getAdvertiserId());
+//                            for(UserEventList _event : userEventLists){
+//                                if(event.getEventId().equals(_event.getEventId())){
+//                                    id = _event.getId();
+//                                }
+//                            }
+////                            storeName = event.getAdvertiserId();
+////                            Events.add(new TimeEvent(id, id+":"+eventName, time, event.getDescription() ,Long.parseLong(event.getTimeRequire())*250, false, rewardItem));
+//                            Events.add(new TimeEvent(id, eventName, time, event.getDescription() ,5*1000, false, rewardItem));
+////                            Events.add(new TimeEvent(event.getId(), event.getId(), event.getCompletedTimes()*1000, true));
+//                        }
                     }
                 });
     }
@@ -417,7 +430,7 @@ public class CarpeDiemController extends Application {
                     @Override
                     public void onCompleted() {
                         if((controller!=null) && (tmp < itemNum)){
-                            controller.setMessageNumber("Backpack", getItemNum());
+                            controller.setMessageNumber("Backpack", itemNum);
                         }
                     }
 
@@ -444,12 +457,16 @@ public class CarpeDiemController extends Application {
 //                        controller.setMessageNumber("Backpack", itemNum);
                         Log.d("RxGetItemList","");
                         Items.clear();
-                        for(UserItemList item : userItemLists.userItemList){
+                        for(NewUserItemList item : userItemLists.userItemList){
 //                            Log.d("RxGetEventList",event.getItemContents());
 //                            CarpeDiemEventObject.item item = event.item;
                             String createdAt = item.getCreatedAt();
                             String expiredAt = item.getExpiredAt();
-                            Items.add(new BackpackItem(item.getId(),item.getItem().getItemDesc(), createdAt, expiredAt));
+//                            Advertiser advertiser = new Advertiser(item.getItem().getAdvertiser().getId(), item.getItem().getAdvertiser().getName());
+//                            Log.d("RxGetItemList", createdAt+" | "+expiredAt);
+//                            Items.add(new BackpackItem(item.getId(),item.getItem().getDescription(), createdAt, expiredAt, item.getItem().getAdvertiser()));
+                            Items.add(new BackpackItem(item));
+//                            Items.add(new BackpackItem(item.getId(),item.getItem().getDescription(), createdAt, expiredAt, item.getItem().getAdvertiser().getId(), item.getItem().getAdvertiser().getName()));
 //                            Events.add(new TimeEvent(item.getId(), item.getItem().getItemName(), 5000, true));
                         }
                     }
@@ -542,23 +559,39 @@ public class CarpeDiemController extends Application {
                 });
     }
 
-    public List<BackpackItem> SorttingItem(){
-        Collections.sort(Items,
-                new Comparator<BackpackItem>() {
-                    public int compare(BackpackItem o1, BackpackItem o2) {
-                        return o1.getDayLeft().compareTo(o2.getDayLeft());
-                    }
-                });
+    public List<BackpackItem> SorttingItem(String method){
+        switch(method){
+            case "left":
+                Collections.sort(Items, new SorttingComarator.BackpackItemSortleft());
+                for (BackpackItem item : Items){
+//                    Log.d("left SORT",item.getDayLeft()+":"+item.getName());
+                }
+                break;
+            case "last":
+                Collections.sort(Items,Collections.<BackpackItem>reverseOrder(new SorttingComarator.BackpackItemSortCreatedAt()));
+                for (BackpackItem item : Items){
+//                    Log.d("last SORT",item.getCreatedAt()+":"+item.getName());
+                }
+                break;
+            case "owner":
+                Collections.sort(Items, new SorttingComarator.BackpackItemSortOwner());
+                for (BackpackItem item : Items){
+//                    Log.d("owner SORT",item.getAdvertiser().getId()+":"+item.getName());
+                }
+                break;
+        }
         return Items;
     }
 
     public void settingDummy(){
         RewardItem rewardItem;
-        rewardItem =new RewardItem("666", "1", "poke", "pika");
-        Events.add(new TimeEvent("1", "eventName", "2016/11/11 11:00", "poky!" ,5*1000, false, rewardItem));
-        Events.add(new TimeEvent("2", "eventName2", "3016/11/11 11:00", "pokypo!" ,5*1000, false, rewardItem));
-        Items.add(new BackpackItem("666","pika", "2016/10/10 11:00", "2017/10/10 11:00"));
-        Items.add(new BackpackItem("666","pika", "2016/10/10 11:00", "2016/12/30 11:00"));
+        rewardItem =new RewardItem("666", "1", "poke", "pika", "3");
+
+        Events.add(new TimeEvent("1", "eventName", "2016/11/11 11:00", "日本橫濱今（7）日開始舉辦為期8天的「皮卡丘大量發生中」活動，除了今日下午的皮卡丘大遊行以外，活動期間有1000隻皮卡丘也會在各地出現，吸引成千上萬包括台灣人在內的的遊客朝聖。" ,5*1000, false, rewardItem));
+        Events.add(new TimeEvent("2", "eventName2", "3016/11/11 11:00", "pocky!" ,5*1000, false, rewardItem));
+//        Items.add(new BackpackItem("666","pika", "2016/10/10 11:00", "2017/10/10 11:00"));
+//        Items.add(new BackpackItem("333","pikapi", "2016/10/14 11:00", "2016/11/24 11:00"));
+//        Items.add(new BackpackItem("666","pika", "2016/10/10 11:00", "2016/12/30 11:00"));
     }
 
     public void locationServiceInitial() {
@@ -603,8 +636,7 @@ public class CarpeDiemController extends Application {
             Double latitude = location.getLatitude();     //取得緯度
             Log.d("getLocation", longitude+":"+latitude);
 //            Events.add(new TimeEvent("00","GPS","2016","location:"+String.valueOf(longitude+":"+latitude), Long.parseLong(60*1000+""), true));
-        }
-        else {
+        }else {
             Log.d("getLocation", "NULL");
             Toast.makeText(this, "無法定位座標", Toast.LENGTH_LONG).show();
         }
