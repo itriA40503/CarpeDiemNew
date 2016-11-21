@@ -3,6 +3,7 @@ package com.ccma.itri.org.tw.carpediem.EventObject;
 import android.app.Notification;
 import android.util.Log;
 
+import com.ccma.itri.org.tw.carpediem.CallApi.ApiObject.NewUserEventList;
 import com.ccma.itri.org.tw.carpediem.CarpeDiemController;
 import com.ccma.itri.org.tw.carpediem.MainActivity;
 import com.ccma.itri.org.tw.carpediem.NewMainActivity;
@@ -26,6 +27,7 @@ public class TimeEvent {
     public boolean mContinuous;
     public CountDownTimerWithPause mTimer;
     public RewardItem mRewardItem;
+    private NewUserEventList userEventList;
 
     public TimeEvent (String id, String eventName,String eventDate, String descripition, long totalTime, boolean continuous){
         Log.d(TAG,"Create "+eventName);
@@ -54,9 +56,28 @@ public class TimeEvent {
         mDescripition = descripition;
         mEventDate = eventDate;
         mRewardItem = rewardItem;
+//        Log.d("NEW Tevent:",rewardItem.getAdvertiserId());
 
         createTimer();
     }
+
+    public TimeEvent(NewUserEventList eventList , boolean continuous, RewardItem rewardItem){
+        userEventList = eventList;
+//        Log.d(TAG,"Create "+eventName);
+        mId = eventList.getId();
+        mEventName = eventList.getEvent().getName();
+        mTotalTime = Long.parseLong(eventList.getEvent().getTimeRequire())*1000;
+        mLogo = setLogoByName(mEventName);
+        mContinuous = continuous;
+        mDescripition = eventList.getEvent().getDescription();
+        mEventDate = eventList.getCreatedAt();
+        mRewardItem = rewardItem;
+//        Log.d("NEW Tevent:",rewardItem.getAdvertiserId());
+
+        createTimer();
+    }
+
+    public NewUserEventList getUserEventList(){return userEventList;}
 
     public void setRewardItem(RewardItem rewardItem){
         mRewardItem = rewardItem;
@@ -128,7 +149,7 @@ public class TimeEvent {
                     .ticker(mEventName)
                     .message("Event Finished !")
                     .smallIcon(R.drawable.install_icon)
-                    .largeIcon(mLogo)
+                    .largeIcon(R.drawable.install_icon)
                     .flags(Notification.DEFAULT_ALL)
                     .click(NewMainActivity.class)
                     .simple()
