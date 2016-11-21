@@ -22,7 +22,7 @@ import com.flyco.dialog.widget.base.BaseDialog;
 
 public class RewardDialog extends BaseDialog<RewardDialog> {
     private ImageView imgLogo, imgType;
-    private TextView txtTitle, txtContent;
+    private TextView txtTitle, txtContent, txtName;
     private View layout;
     private View inflate;
     private int logo, type;
@@ -60,9 +60,11 @@ public class RewardDialog extends BaseDialog<RewardDialog> {
 
             txtTitle = (TextView)inflate.findViewById(R.id.txt_reward_title);
             txtContent = (TextView)inflate.findViewById(R.id.txt_reward_content);
+            txtName = (TextView)inflate.findViewById(R.id.txt_reward_name);
 
             txtTitle.setText(rewardItem.getName());
             txtContent.setText(rewardItem.getDescription());
+            txtName.setText(rewardItem.getAdvertiser().getName());
         }
 //        imageView = (ImageView)inflate.findViewById(R.id.img_dialog);
 //        imageView.setImageResource(mImage);
