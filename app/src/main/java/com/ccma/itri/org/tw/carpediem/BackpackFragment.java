@@ -91,7 +91,8 @@ public class BackpackFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_backpack);
 
         Log.d("BackpackFragment","new adapter");
-        adapter = new BaseRecyclerViewAdapter(getActivity());
+//        adapter = new BaseRecyclerViewAdapter(getActivity());
+        adapter = new BaseRecyclerViewAdapter(getActivity(), getActivity());
         mRecyclerView.setAdapter(new ScaleInAnimationAdapter(adapter));
 //        alphaAdapter.setDuration(1000);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -175,6 +176,14 @@ public class BackpackFragment extends Fragment {
 
                 BackpackItemList = CarpeDiemController.getInstance().SorttingItem("owner");
                 adapter.notifyDataSetChanged();
+
+            }
+        });
+
+        imgBackpack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRecyclerView.scrollToPosition(0);
             }
         });
     }
