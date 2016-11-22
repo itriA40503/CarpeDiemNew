@@ -143,14 +143,14 @@ public class NewMainActivity extends AppCompatActivity {
         TabItemBuilder tabEvents = new TabItemBuilder(this).create()
                 .setDefaultIcon(R.drawable.menu_home_icon_pickup)
                 .setText("Events")
-                .setSelectedColor(getResources().getColor(R.color.bluelight))
+                .setSelectedColor(getResources().getColor(R.color.orangelight))
                 .setTag("Events")
                 .build();
         //# create bottom tab - backpack
         TabItemBuilder tabBackpack = new TabItemBuilder(this).create()
                 .setDefaultIcon(R.drawable.menu_backpack_icon_pickup)
                 .setText("Backpack")
-                .setSelectedColor(getResources().getColor(R.color.greenlight))
+                .setSelectedColor(getResources().getColor(R.color.orangelight))
                 .setTag("Backpack")
                 .build();
         //# create bottom tab - news
@@ -185,6 +185,7 @@ public class NewMainActivity extends AppCompatActivity {
 
         CarpeDiemController.getInstance().controller.addTabItemClickListener(listener);
     }
+
     OnTabItemSelectListener listener = new OnTabItemSelectListener() {
         @Override
         public void onSelected(int index, Object tag){
