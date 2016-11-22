@@ -146,6 +146,7 @@ public class TimeEvent {
             mStatus = END;
             PugNotification.with(CarpeDiemController.getInstance().getApplicationContext())
                     .load()
+                    .autoCancel(true)
                     .ticker(mEventName)
                     .message("Event Finished !")
                     .smallIcon(R.drawable.install_icon)
