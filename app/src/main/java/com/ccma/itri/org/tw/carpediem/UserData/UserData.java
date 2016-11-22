@@ -13,6 +13,8 @@ import com.ccma.itri.org.tw.carpediem.CarpeDiemController;
 class User {
     public String _uuid;
     public String _token;
+    public boolean _showCaseEvent = false;
+    public boolean _showCaseItem = false;
 //    public String tmpkey;
 
     public User(){
@@ -25,6 +27,13 @@ class User {
     public User(String uuid, String token){
         this._uuid = uuid;
         this._token = token;
+    }
+
+    public User(String uuid, String token, boolean showEvent, boolean showItem){
+        this._uuid = uuid;
+        this._token = token;
+        this._showCaseEvent = showEvent;
+        this._showCaseItem = showItem;
     }
 
     public void clear () {
@@ -73,7 +82,9 @@ public class UserData {
         Log.d("UserData","restore");
         _user = new User(
                 userPref.getString("uuid", null),
-                userPref.getString("token", null)
+                userPref.getString("token", null),
+                userPref.getBoolean("showEvent",false),
+                userPref.getBoolean("showItem",false)
                 );
 
         if(_user._uuid != null){
@@ -115,6 +126,30 @@ public class UserData {
         userEditor.putString("uuid", uuid);
         userEditor.putString("token", token);
         userEditor.commit();
+    }
+
+    public boolean checkShowCaseEvent(){
+        Log.d("checkShowCaseEvent",userPref.getBoolean("showEvent",false)+"");
+        if(userPref.getBoolean("showEvent",false)){
+            return true;
+        }else {
+            userEditor.putBoolean("showEvent",true);
+            userEditor.commit();
+            _user._showCaseEvent = true;
+            return false;
+        }
+    }
+
+    public boolean checkShowCaseItem(){
+        Log.d("checkShowCaseItem",userPref.getBoolean("showItem",false)+"");
+        if(userPref.getBoolean("showItem",false)){
+            return true;
+        }else {
+            userEditor.putBoolean("showItem",true);
+            userEditor.commit();
+            _user._showCaseItem = true;
+            return false;
+        }
     }
 
     public void saveUserToken(String token){
