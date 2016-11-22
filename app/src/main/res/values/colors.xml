@@ -20,6 +20,7 @@
     <color name="greendark">#53933F</color>
     <color name="orangelight">#F4C036</color>
     <color name="orangelight2">#F3AE1B</color>
+    <color name="orangelight2_transparent">#80F3AE1B</color>
     <color name="orangedark">#BB6008</color>
     <color name="black">#000000</color>
     <color name="black_semi_transparent">#B2000000</color>
