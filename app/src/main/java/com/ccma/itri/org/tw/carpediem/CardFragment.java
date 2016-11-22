@@ -1,6 +1,7 @@
 package com.ccma.itri.org.tw.carpediem;
 
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.support.v4.app.Fragment;
@@ -44,6 +46,8 @@ import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 /**
  * Created by A40503 on 2016/9/21.
@@ -65,6 +69,12 @@ public class CardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d("CardFragment","onCreateView");
         view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        //# ShowCase
+//        CarpeDiemController.getInstance().mainShowSeq = new  MaterialShowcaseSequence(getActivity(), "TRY");
+//        ShowcaseConfig config = new ShowcaseConfig();
+//        config.setDelay(500); // half second between each showcase view
+//        CarpeDiemController.getInstance().mainShowSeq.setConfig(config);
 
         //# pull to refresh
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh_main_layout);
@@ -90,14 +100,15 @@ public class CardFragment extends Fragment {
         /* recyclerView*/
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_timevent);
         Log.d("CardFragment","new adapter");
-        adapter = new TimeEventRViewAdapter(getActivity());
+//        adapter = new TimeEventRViewAdapter(getActivity());
+        adapter = new TimeEventRViewAdapter(getActivity(), getActivity());
+
         mRecyclerView.setAdapter(new AlphaInAnimationAdapter(adapter));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
 //        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
         return view;
     }
 
@@ -242,4 +253,5 @@ public class CardFragment extends Fragment {
             emptylayout.setVisibility(View.GONE);
         }
     }
+
 }
