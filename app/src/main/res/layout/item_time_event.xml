@@ -9,6 +9,7 @@
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp"
     android:orientation="horizontal"
+    android:id="@+id/card_event"
     app:cardPreventCornerOverlap="false"
     android:background="@color/white"
     app:cardUseCompatPadding="true"
@@ -16,12 +17,21 @@
     app:cardCornerRadius="5dp">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_event">
+        <co.mobiwise.library.ProgressLayout
+            android:id="@+id/progressLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:maxProgress="100"
+            app:loadedColor="@color/orangelight2_transparent"
+            app:emptyColor="@color/white"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
+            android:id="@+id/ll_content_event"
             android:orientation="horizontal"
             android:gravity="center">
             <ImageView
