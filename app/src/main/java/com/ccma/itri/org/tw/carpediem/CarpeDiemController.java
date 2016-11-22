@@ -43,6 +43,7 @@ import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 
 /**
  * Created by A40503 on 2016/9/20.
@@ -55,6 +56,9 @@ public class CarpeDiemController extends Application {
     public List<BackpackItem> Items;
     private LocationManager lms;
     private Location location;
+//    public MaterialShowcaseSequence mainShowSeq;
+    public boolean showCase = false;
+    public boolean showCaseItems = false;
     public int eventNum, itemNum;
     public Controller controller;
 //    public String storeName = null;
@@ -376,10 +380,10 @@ public class CarpeDiemController extends Application {
                         eventNum = carpeDiemListEventObject.userEventList.size();
 //                        itemNum = carpeDiemListEventObject.eventList.size();
                         Events.clear();
-                        RewardItem tempItem;
-                        tempItem =new RewardItem("666", "1", "poke", "pika", "00");
-                        Events.add(new TimeEvent("00","GPS","2016","location:"+String.valueOf(lng+":"+lat), Long.parseLong(60*1000+""), true, tempItem));
-                        Events.add(new TimeEvent("0","userEventList","2016", "Size:"+String.valueOf(eventNum), Long.parseLong(60*1000+""), true, tempItem));
+//                        RewardItem tempItem;
+//                        tempItem =new RewardItem("666", "1", "poke", "pika", "00");
+//                        Events.add(new TimeEvent("00","GPS","2016","location:"+String.valueOf(lng+":"+lat), Long.parseLong(60*1000+""), true, tempItem));
+//                        Events.add(new TimeEvent("0","userEventList","2016", "Size:"+String.valueOf(eventNum), Long.parseLong(60*1000+""), true, tempItem));
                         Log.d("RxGetNewEventList","");
 
 //                        ArrayList<UserEventList> userEventLists = new ArrayList<UserEventList>(); //# for mapping
