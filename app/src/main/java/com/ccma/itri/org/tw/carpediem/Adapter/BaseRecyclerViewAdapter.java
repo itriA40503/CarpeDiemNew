@@ -1,5 +1,6 @@
 package com.ccma.itri.org.tw.carpediem.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -16,12 +17,21 @@ import com.ccma.itri.org.tw.carpediem.CarpeDiemController;
 import com.ccma.itri.org.tw.carpediem.Dialog.BackpackDialog;
 import com.ccma.itri.org.tw.carpediem.EventObject.BackpackItem;
 import com.ccma.itri.org.tw.carpediem.R;
+import com.ccma.itri.org.tw.carpediem.ShowCase.CustomShowCase;
 import com.ccma.itri.org.tw.carpediem.Timer.CountDownTimerWithPause;
+import com.ccma.itri.org.tw.carpediem.UserData.UserData;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 /**
  * Created by A40503 on 2016/11/10.
@@ -30,9 +40,10 @@ import java.util.List;
 public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerViewAdapter.myViewHolder> {
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+    private Activity mActcivity;
     private String[] mTitles;
     private List<BackpackItem> backpackItemList;
-
+    private List<CountDownTimerWithPause> timers;
 
     public static class myViewHolder extends RecyclerView.ViewHolder {
         LinearLayout ll_main, ll_reward;
@@ -77,6 +88,18 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
         Log.d("BaseRecyclerViewAdapter","new");
         backpackItemList = CarpeDiemController.getInstance().getBackPackItems();
         mContext = context;
+
+//        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mLayoutInflater = LayoutInflater.from(context);
+    }
+
+    public BaseRecyclerViewAdapter(Activity activity, Context context) {
+//        mTitles = context.getResources().getStringArray(R.array.titles);
+        Log.d("BaseRecyclerViewAdapter","new");
+        backpackItemList = CarpeDiemController.getInstance().getBackPackItems();
+        mContext = context;
+        mActcivity = activity;
 //        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayoutInflater = LayoutInflater.from(context);
@@ -91,7 +114,26 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
         View view = mLayoutInflater.inflate(R.layout.item_backpack2, parent, false);
 
         myViewHolder viewHolder = new myViewHolder(view);
-
+//        showCase(viewHolder);
+//        timers = new ArrayList<CountDownTimerWithPause>();
+//        for (BackpackItem item : backpackItemList){
+//            CountDownTimerWithPause mTimer =new CountDownTimerWithPause(item.getleftTimes(), 1000) {
+//                @Override
+//                public void onTick(long millisUntilFinished) {
+//                    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+//                    Date format = new Date(millisUntilFinished);
+//                    viewHolder.dayleft.setText(sdf.format(format));
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//
+//                }
+//            }.create();
+//
+//            timers.add(mTimer);
+//        }
+        showCase(viewHolder);
         return viewHolder;
     }
 
@@ -110,6 +152,9 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
         int leftday = item.getDayLeft();
         Log.d("onBindViewHolder",position+":"+leftday);
         if(leftday == 0 && leftday < 1){
+//            if (!timers.get(position).isRunning()){
+//                timers.get(position).resume();
+//            }
 
             holder.dayleft.setText("TODAY LIMIT !");
             holder.dayleft.setTextSize(18);
@@ -132,6 +177,7 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
 
 //            holder.dayleft.setText(item.getTimer().timeLeft()+"");
         }else {
+//            timers.get(position).pause();
             holder.dayleft.setText(String.valueOf(item.getDayLeft()));
             holder.dayleft2.setVisibility(View.VISIBLE);
             holder.dayleft.setTextSize(20);
@@ -211,4 +257,68 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
         return sdf.format(format);
     }
 
+    private void showCase(final myViewHolder viewHolder) {
+        if(!UserData.getInstance().checkShowCaseItem()){
+//        if(!CarpeDiemController.getInstance().showCaseItems) {
+//            CarpeDiemController.getInstance().showCaseItems = true;
+            final ShowcaseView ShowCase = new ShowcaseView.Builder(mActcivity)
+                    .withHoloShowcase()
+                    .setStyle(R.style.CustomShowcaseTheme2)
+                    .setTarget(new ViewTarget(viewHolder.title))
+//                    .hideOnTouchOutside()
+                    .setContentTitle("Bonus")
+                    .setContentText("This is bonus of store.")
+                    .build();
+            ShowCase.setButtonText("Next");
+            ShowCase.overrideButtonClick(new View.OnClickListener() {
+                int count = 1;
+
+                @Override
+                public void onClick(View v) {
+                    count++;
+                    switch (count) {
+                        case 1:
+//                            ShowCase.setTarget(new ViewTarget(viewHolder.deadline));
+                            ShowCase.setShowcase(new ViewTarget(viewHolder.deadline), true);
+                            ShowCase.setContentTitle("Deadline");
+                            ShowCase.setContentText("This is deadline.");
+                            ShowCase.setButtonText("Next");
+                            break;
+
+                        case 2:
+//                            ShowCase.setTarget(new ViewTarget(viewHolder.logo));
+                            ShowCase.setShowcase(new ViewTarget(viewHolder.logo), true);
+                            ShowCase.setContentTitle(("Get bonus!"));
+                            ShowCase.setContentText("Click image can get bonus !!");
+                            ShowCase.setButtonText("Finish");
+//                            ShowCase.hide();
+                            break;
+                        case 3:
+                            ShowCase.hide();
+                    }
+                }
+            });
+        }
+//        Log.d("showCaseItems", CarpeDiemController.getInstance().showCaseItems + "");
+//        if (!CarpeDiemController.getInstance().showCaseItems) {
+//            CarpeDiemController.getInstance().showCaseItems = true;
+//
+////             sequence example
+//            ShowcaseConfig config = new ShowcaseConfig();
+//            config.setDelay(500); // half second between each showcase view
+//
+//            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(mActcivity, "TRY");
+//            sequence.setConfig(config);
+//
+//            sequence.addSequenceItem(viewHolder.title,
+//                    "This is bonus of store.", "GOT IT");
+//            sequence.addSequenceItem(viewHolder.deadline,
+//                    "This is deadline.", "GOT IT");
+//            sequence.addSequenceItem(viewHolder.logo,
+//                    "Tab image can get bonus !!", "GOT IT");
+//            sequence.start();
+//
+////            sequence.start();
+//        }
+    }
 }
