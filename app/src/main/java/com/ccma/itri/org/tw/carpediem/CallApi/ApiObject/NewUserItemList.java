@@ -5,6 +5,7 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by A40503 on 2016/11/16.
@@ -35,7 +36,7 @@ public class NewUserItemList {
         Date date = new Date(unixSeconds*1000L); // *1000 is to convert seconds to milliseconds
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss"); // the format of your date
-//        sdf.setTimeZone(TimeZone.getTimeZone("GMT-4")); // give a timezone reference for formating (see comment at the bottom
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT-0")); // give a timezone reference for formating (see comment at the bottom
         String formatCreateDate = sdf.format(date);
 
         return formatCreateDate;
@@ -50,7 +51,7 @@ public class NewUserItemList {
         Date date = new Date(unixSeconds*1000L); // *1000 is to convert seconds to milliseconds
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss"); // the format of your date
-//        sdf.setTimeZone(TimeZone.getTimeZone("GMT-4")); // give a timezone reference for formating (see comment at the bottom
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT-0")); // give a timezone reference for formating (see comment at the bottom
         String formattedDate = sdf.format(date);
 
         return formattedDate;
